@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>compiler</groupId>
+  <artifactId>uniCompiler</artifactId>
+  <version>0.0.1</version>
+
+  <name>UNI COMPILER</name>
+  <description>university compiler</description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+	<dependencies></dependencies>
+
+	<profiles></profiles>
+
+</project>
