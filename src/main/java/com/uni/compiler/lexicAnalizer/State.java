@@ -5,22 +5,26 @@ import java.util.HashMap;
 import com.uni.compiler.Actions.Action;
 
 public class State {
-	private  Action actionToExecute;
-	HashMap<Character, State> nextStates = new HashMap<Character, State>();
-	
-	public State (){
-		
+	private String name;
+	HashMap<Integer, Cell> nextStates = new HashMap<Integer, Cell>();
+
+	public State(String stateName) {
+		name = stateName;
 	}
-	
-	public State getNextState(Character c){
-		return nextStates.get(c);
+
+	public State getNextState(Integer c) {
+		return nextStates.get(c).getState();
 	}
-	
-	public Action getAction(){
-		return actionToExecute;
+
+	public Action getAction(Integer c) {
+		return nextStates.get(c).getActionToExecute();
 	}
-	
-	public void addNextState(Character c,State state){
-		nextStates.put(c, state);
+
+	public void addNextState(Integer c, Cell nState) {
+		nextStates.put(c, nState);
+	}
+
+	public boolean isFinal() {
+		return this.name.equals("EndState");
 	}
 }

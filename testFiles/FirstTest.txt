@@ -1,0 +1,27 @@
+begin
+if (3 <=3) then
+begin
+"kaskkak";
+end
+else
+if (frula == 25) then
+hola = "esoooooo";
+
+\\comentario 	1
+if (1 != "esto")then
+print "hola";
+else if (a<b)then
+print "hola2"
+else if (a>b) then
+print "lala"
+
+4frdf
+jaja=34cd
+
+if (pepe + 25) then
+\\hola como estas
+print "LALALALLALALAL++
+fajsdflkjsalkdflksadfk"
+
+!
+end

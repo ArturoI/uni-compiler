@@ -1,11 +1,20 @@
 package com.uni.compiler.Actions;
 
-public class ErrorAction implements Action {
+import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 
-	@Override
-	public void executeAction() {
-		// TODO Auto-generated method stub
-		
+public class ErrorAction extends Action{
+
+	private LexicAnalizer lexicAnalizer;
+	
+	public ErrorAction(LexicAnalizer la){
+		lexicAnalizer=la;
 	}
+	
+	@Override
+	public void executeAction(Character c) {
+		lexicAnalizer.saveCharacter(c);
+		nextToken=lexicAnalizer.getTokenInConstruction();
+		nextToken.setError("Unespected Character");
+			}
 
 }
