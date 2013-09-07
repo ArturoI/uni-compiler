@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 public class FileManager {
 
-	BufferedReader source;
+	private BufferedReader source;
 
 	public FileManager(String path) {
 		try {

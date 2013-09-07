@@ -59,7 +59,7 @@ public class LexicAnalizer {
 		}
 
 		if (!(currentState.isFinal()) && ((charac = source.readChar()) == null)) {
-			nextToken.setError("Error in line: " + line + " uncomplete");
+			nextToken.setError("Error in line: " + line + " incomplete Token");
 		}
 
 		return nextToken;
@@ -176,5 +176,13 @@ public class LexicAnalizer {
 
 		return new Integer(-1);
 	}
+        
+        public HashMap getReservedWordsTable (){
+            return this.reservedWords;
+        }
+        
+        public List<Token> getSymbolsTable (){
+            return this.symbolsTable;
+        }
 
 }

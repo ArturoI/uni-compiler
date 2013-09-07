@@ -38,6 +38,14 @@ public class Token {
 	public boolean hasWarning() {
 		return "".equals(warningMessage);
 	}
+        
+        public String getWarning(){
+            return this.warningMessage;
+        }
+        
+        public String getError(){
+            return this.errorMessage;
+        }
 
 	public String getType() {
 		return type;

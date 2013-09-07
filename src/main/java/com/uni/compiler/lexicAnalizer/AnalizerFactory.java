@@ -95,7 +95,6 @@ public class AnalizerFactory {
 		reservedWords.put("then", "then");
 		reservedWords.put("begin", "begin");
 		reservedWords.put("end", "end");
-		reservedWords.put("end", "ulong");
 		reservedWords.put("print", "print");
 		reservedWords.put("fuction", "fuction");
 		reservedWords.put("return", "return");

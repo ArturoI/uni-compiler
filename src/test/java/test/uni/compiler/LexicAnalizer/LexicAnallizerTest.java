@@ -2,7 +2,7 @@ package test.uni.compiler.LexicAnalizer;
 
 import java.io.IOException;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 import com.uni.compiler.lexicAnalizer.Token;
@@ -10,10 +10,10 @@ import com.uni.compiler.lexicAnalizer.Token;
 public class LexicAnallizerTest {
 	private LexicAnalizer analizer;
 
-	@Test
+//	@Test
 	public void test() throws IOException {
 		analizer = new LexicAnalizer(
-				"/Users/aiglesias/Documents/workspace/uni-compiler/testFiles/FirstTest.txt");
+				"/Users/emn/workspace/uni-compiler/testFiles/FirstTest.txt");
 		Token lastToken;
 		try {
 			while ((lastToken = analizer.getToken()) != null) {
@@ -21,7 +21,8 @@ public class LexicAnallizerTest {
 						+ " Lexema: " + lastToken.getToken());
 			}
 		} catch (Exception e) {
-			System.out.println("End");
+			System.out.println("An exception was trhown \n - Cause: " + e.getCause()
+                                           + "\n Message: " + e.getMessage());
 		}
 	}
 
