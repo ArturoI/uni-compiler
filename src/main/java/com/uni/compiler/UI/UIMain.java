@@ -4,9 +4,9 @@
  */
 
 /*
- * Visual.java
+ * UIMain.java
  *
- * Created on Sep 7, 2009, 2:01:42 AM
+ * Created on Sep 7, 2013, 2:01:42 AM
  */
 
 package com.uni.compiler.UI;
@@ -31,7 +31,6 @@ import javax.swing.JTextPane;
 
 /**
  *
- * @author Pablo y mati y ema
  */
 public class UIMain extends javax.swing.JFrame {
 
