@@ -469,7 +469,7 @@ public class UIMain extends javax.swing.JFrame {
             
             Iterator it = this.la.getSymbolsTable().iterator();
             while (it.hasNext()) {
-                modelo.addElement( ((Token) it.next()).getToken() );
+                modelo.addElement( ((String) it.next()) );
             }
             List.setModel(modelo);
             List.setVisible(true);

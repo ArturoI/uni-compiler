@@ -7,7 +7,7 @@ import java.util.List;
 
 public class LexicAnalizer {
 	private FileManager source;
-	private List<Token> symbolsTable = new ArrayList<Token>();
+	private List<String> symbolsTable = new ArrayList<String>();
 	private AnalizerFactory analizerFactory = AnalizerFactory.getInstance(this);
 	public int line = 1;
 	private Token nextToken = null;
@@ -115,12 +115,13 @@ public class LexicAnalizer {
 
 	public void addToSymbolsTable(Token t) {
 		if (!t.hasError()
-				&& (t.getType().equals("Identificador")
-						|| t.getType().equals("Constante") || (t.getType()
-						.equals("Cadena")))
-				&& !reservedWords.containsKey(t.getToken())) {
+                    && ( t.getType().equals("Identificador")
+                         || t.getType().equals("Constante") || (t.getType().equals("Cadena")))
+                    && !reservedWords.containsKey(t.getToken())
+                    && !symbolsTable.contains(t.getToken())
+                   ) {
 
-			symbolsTable.add(t);
+			symbolsTable.add(t.getToken());
 			System.out.println("[V] Token added line: " + line + " TokenType: "
 					+ t.getType() + " Token: " + t.getToken());
 		} else {
@@ -197,7 +198,7 @@ public class LexicAnalizer {
             return this.reservedWords;
         }
         
-        public List<Token> getSymbolsTable (){
+        public List<String> getSymbolsTable (){
             return this.symbolsTable;
         }
 
