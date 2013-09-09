@@ -10,11 +10,10 @@ public class IdAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
+		//lexicAnalizer.inicToken();
+            	lexicAnalizer.saveCharacter(c);
 		nextToken = lexicAnalizer.getTokenInConstruction();
-		nextToken.addChar(c);
-		nextToken.setTokenType("identificador");
-
+		nextToken.setTokenType("Identificador");
 	}
 
 }

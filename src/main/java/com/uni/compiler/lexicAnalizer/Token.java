@@ -4,7 +4,7 @@ public class Token {
 
 	private String type;
 	private String lexema;
-	// private int line;
+	private int line;
 	private String errorMessage = "";
 	private String warningMessage = "";
 
@@ -36,7 +36,7 @@ public class Token {
 	}
 
 	public boolean hasWarning() {
-		return "".equals(warningMessage);
+		return !"".equals(warningMessage);
 	}
         
         public String getWarning(){
@@ -66,5 +66,9 @@ public class Token {
 	public void setToken(String token) {
 		lexema = token;
 	}
+        
+        public void setLine(int line){ this.line = line; }
+        
+        public int getLine(){ return this.line; }
 
 }

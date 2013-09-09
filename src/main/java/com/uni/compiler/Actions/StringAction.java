@@ -11,10 +11,10 @@ public class StringAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
+		//lexicAnalizer.inicToken();
 		nextToken = lexicAnalizer.getTokenInConstruction();
 		nextToken.addChar(c);
-		nextToken.setTokenType("cadena");
+		nextToken.setTokenType("Cadena");
 	}
 
 }

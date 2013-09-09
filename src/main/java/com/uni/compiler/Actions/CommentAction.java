@@ -10,9 +10,9 @@ public class CommentAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
-		nextToken =lexicAnalizer.getTokenInConstruction();
-		nextToken.setTokenType("comentario");
+		//lexicAnalizer.inicToken();
+		nextToken = lexicAnalizer.getTokenInConstruction();
+		nextToken.setTokenType("Comentario");
 	}
 
 }

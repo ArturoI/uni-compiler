@@ -3,15 +3,16 @@ package com.uni.compiler.lexicAnalizer;
 import java.util.HashMap;
 
 import com.uni.compiler.Actions.Action;
+import com.uni.compiler.Actions.AssignAction;
 import com.uni.compiler.Actions.CommentAction;
 import com.uni.compiler.Actions.ConstAction;
 import com.uni.compiler.Actions.ConsumeAction;
-import com.uni.compiler.Actions.DeleteCharacterAction;
+import com.uni.compiler.Actions.ComparatorAction;
 import com.uni.compiler.Actions.EmptyAction;
 import com.uni.compiler.Actions.ErrorAction;
 import com.uni.compiler.Actions.IdAction;
 import com.uni.compiler.Actions.InvalidCharacterAction;
-import com.uni.compiler.Actions.NotConsumeAction;
+import com.uni.compiler.Actions.NCComparatorAction;
 import com.uni.compiler.Actions.OperationAction;
 import com.uni.compiler.Actions.StringAction;
 
@@ -31,36 +32,42 @@ public class AnalizerFactory {
 	private State s7 = new State("SeventhState");
 	private State s8 = new State("EighthState");
 	private State s9 = new State("NinthState");
+	private State s10 = new State("TenthState");
+
 	private State se = new State("EndState");
 
 	// actions
 	private Action idAction = null;
-	private Action consAction = null;
+	private Action constAction = null;
 	private Action stringAction = null;
 	private Action emptyAction = null;
 	private Action invalidCharacterAction = null;
 	private Action operationAction = null;
 	private Action consumeAction = null;
-	private Action notConsumeAction = null;
+	private Action ncComparatorAction = null;
 	private Action errorAction = null;
 	private Action commentAction = null;
-	private Action deleteCharAction = null;
+	private Action comparatorAction = null;
+        private Action assignAction = null;
 
 	private AnalizerFactory(LexicAnalizer la) {
 		lexicAnalizer = la;
+                
 		idAction = new IdAction(lexicAnalizer);
-		consAction = new ConstAction(lexicAnalizer);
+		constAction = new ConstAction(lexicAnalizer);
 		stringAction = new StringAction(lexicAnalizer);
 		emptyAction = new EmptyAction();
 		invalidCharacterAction = new InvalidCharacterAction(lexicAnalizer);
+                assignAction = new AssignAction(lexicAnalizer);
 		operationAction = new OperationAction(lexicAnalizer);
 		consumeAction = new ConsumeAction(lexicAnalizer);
-		notConsumeAction = new NotConsumeAction(lexicAnalizer);
+		ncComparatorAction = new NCComparatorAction(lexicAnalizer);
 		errorAction = new ErrorAction(lexicAnalizer);
 		commentAction = new CommentAction(lexicAnalizer);
-		deleteCharAction = new DeleteCharacterAction(lexicAnalizer);
+		comparatorAction = new ComparatorAction(lexicAnalizer);
 
 		createEndState();
+                createState10();
 		createState9();
 		createState8();
 		createState7();
@@ -108,6 +115,8 @@ public class AnalizerFactory {
 		return reservedWords;
 	}
 
+        /*
+        
 	public Action getEmptyAction() {
 		return emptyAction;
 	}
@@ -126,7 +135,7 @@ public class AnalizerFactory {
 
 	public Action createErrorAction() {
 		return errorAction;
-	}
+	} */
 
 	public State stateMapping(int state) {
 		if (state == 1) {
@@ -156,29 +165,33 @@ public class AnalizerFactory {
 		if (state == 9) {
 			return s9;
 		}
-		if (state == 10) {
+                if (state == 10) {
+			return s10;
+		}
+                
+		if (state == 11) {
 			return se;
 		}
 		return null;
 	}
 
 	public void createBeginState() {
-		s1.addNextState(new Integer(1), new Cell(s4, idAction));
-		s1.addNextState(new Integer(2), new Cell(s5, consAction));
+		s1.addNextState(new Integer(1), new Cell(s7, consumeAction));
+		s1.addNextState(new Integer(2), new Cell(s8, consumeAction));
 		s1.addNextState(new Integer(3), new Cell(se, operationAction));
 		s1.addNextState(new Integer(4), new Cell(se, operationAction));
 		s1.addNextState(new Integer(5), new Cell(se, operationAction));
-		s1.addNextState(new Integer(6), new Cell(s2, operationAction));
-		s1.addNextState(new Integer(7), new Cell(s2, operationAction));
-		s1.addNextState(new Integer(8), new Cell(s3, operationAction));
-		s1.addNextState(new Integer(9), new Cell(s2, operationAction));
+		s1.addNextState(new Integer(6), new Cell(s2, consumeAction));
+		s1.addNextState(new Integer(7), new Cell(s3, consumeAction));
+		s1.addNextState(new Integer(8), new Cell(s4, consumeAction));
+		s1.addNextState(new Integer(9), new Cell(s3, consumeAction));
 		s1.addNextState(new Integer(10), new Cell(se, operationAction));
-		s1.addNextState(new Integer(11), new Cell(s8, commentAction));
-		s1.addNextState(new Integer(12), new Cell(se, operationAction));
-		s1.addNextState(new Integer(13), new Cell(se, operationAction));
-		s1.addNextState(new Integer(14), new Cell(se, operationAction));
-		s1.addNextState(new Integer(15), new Cell(se, operationAction));
-		s1.addNextState(new Integer(16), new Cell(s6, stringAction));
+		s1.addNextState(new Integer(11), new Cell(s5, consumeAction));
+		s1.addNextState(new Integer(12), new Cell(se, consumeAction));
+		s1.addNextState(new Integer(13), new Cell(se, consumeAction));
+		s1.addNextState(new Integer(14), new Cell(se, consumeAction));
+		s1.addNextState(new Integer(15), new Cell(se, consumeAction));
+		s1.addNextState(new Integer(16), new Cell(s9, consumeAction));
 		s1.addNextState(new Integer(17), new Cell(s1, emptyAction));
 		s1.addNextState(new Integer(18), new Cell(s1, emptyAction));
 		s1.addNextState(new Integer(19), new Cell(s1, emptyAction));
@@ -186,101 +199,101 @@ public class AnalizerFactory {
 	}
 
 	public void createState2() {
-		s2.addNextState(new Integer(1), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(2), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(3), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(4), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(5), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(6), new Cell(se, consumeAction));
-		s2.addNextState(new Integer(7), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(8), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(9), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(10), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(11), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(12), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(13), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(14), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(15), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(16), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(17), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(18), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(19), new Cell(se, notConsumeAction));
-		s2.addNextState(new Integer(-1), new Cell(se, notConsumeAction));
+		s2.addNextState(new Integer(1), new Cell(se, assignAction));
+		s2.addNextState(new Integer(2), new Cell(se, assignAction));
+		s2.addNextState(new Integer(3), new Cell(se, assignAction));
+		s2.addNextState(new Integer(4), new Cell(se, assignAction));
+		s2.addNextState(new Integer(5), new Cell(se, assignAction));
+		s2.addNextState(new Integer(6), new Cell(se, comparatorAction));
+		s2.addNextState(new Integer(7), new Cell(se, assignAction));
+		s2.addNextState(new Integer(8), new Cell(se, assignAction));
+		s2.addNextState(new Integer(9), new Cell(se, assignAction));
+		s2.addNextState(new Integer(10), new Cell(se, assignAction));
+		s2.addNextState(new Integer(11), new Cell(se, assignAction));
+		s2.addNextState(new Integer(12), new Cell(se, assignAction));
+		s2.addNextState(new Integer(13), new Cell(se, assignAction));
+		s2.addNextState(new Integer(14), new Cell(se, assignAction));
+		s2.addNextState(new Integer(15), new Cell(se, assignAction));
+		s2.addNextState(new Integer(16), new Cell(se, assignAction));
+		s2.addNextState(new Integer(17), new Cell(se, assignAction));
+		s2.addNextState(new Integer(18), new Cell(se, assignAction));
+		s2.addNextState(new Integer(19), new Cell(se, assignAction));
+		s2.addNextState(new Integer(-1), new Cell(se, assignAction));
 	}
 
 	public void createState3() {
-		s3.addNextState(new Integer(1), new Cell(se, errorAction));
-		s3.addNextState(new Integer(2), new Cell(se, errorAction));
-		s3.addNextState(new Integer(3), new Cell(se, errorAction));
-		s3.addNextState(new Integer(4), new Cell(se, errorAction));
-		s3.addNextState(new Integer(5), new Cell(se, errorAction));
-		s3.addNextState(new Integer(6), new Cell(se, consumeAction));
-		s3.addNextState(new Integer(7), new Cell(se, errorAction));
-		s3.addNextState(new Integer(8), new Cell(se, errorAction));
-		s3.addNextState(new Integer(9), new Cell(se, errorAction));
-		s3.addNextState(new Integer(10), new Cell(se, errorAction));
-		s3.addNextState(new Integer(11), new Cell(se, errorAction));
-		s3.addNextState(new Integer(12), new Cell(se, errorAction));
-		s3.addNextState(new Integer(13), new Cell(se, errorAction));
-		s3.addNextState(new Integer(14), new Cell(se, errorAction));
-		s3.addNextState(new Integer(15), new Cell(se, errorAction));
-		s3.addNextState(new Integer(16), new Cell(se, errorAction));
-		s3.addNextState(new Integer(17), new Cell(se, errorAction));
-		s3.addNextState(new Integer(18), new Cell(se, errorAction));
-		s3.addNextState(new Integer(19), new Cell(se, errorAction));
-		s3.addNextState(new Integer(-1), new Cell(se, errorAction));
+		s3.addNextState(new Integer(1), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(2), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(3), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(4), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(5), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(6), new Cell(se, comparatorAction));
+		s3.addNextState(new Integer(7), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(8), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(9), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(10), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(11), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(12), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(13), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(14), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(15), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(16), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(17), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(18), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(19), new Cell(se, ncComparatorAction));
+		s3.addNextState(new Integer(-1), new Cell(se, ncComparatorAction));
 	}
 
 	public void createState4() {
-		s4.addNextState(new Integer(1), new Cell(s4, consumeAction));
-		s4.addNextState(new Integer(2), new Cell(s4, consumeAction));
-		s4.addNextState(new Integer(3), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(4), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(5), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(6), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(7), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(8), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(9), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(10), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(11), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(12), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(13), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(14), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(15), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(16), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(17), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(18), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(19), new Cell(se, notConsumeAction));
-		s4.addNextState(new Integer(-1), new Cell(se, notConsumeAction));
+		s4.addNextState(new Integer(1), new Cell(se, errorAction));
+		s4.addNextState(new Integer(2), new Cell(se, errorAction));
+		s4.addNextState(new Integer(3), new Cell(se, errorAction));
+		s4.addNextState(new Integer(4), new Cell(se, errorAction));
+		s4.addNextState(new Integer(5), new Cell(se, errorAction));
+		s4.addNextState(new Integer(6), new Cell(se, comparatorAction));
+		s4.addNextState(new Integer(7), new Cell(se, errorAction));
+		s4.addNextState(new Integer(8), new Cell(se, errorAction));
+		s4.addNextState(new Integer(9), new Cell(se, errorAction));
+		s4.addNextState(new Integer(10), new Cell(se, errorAction));
+		s4.addNextState(new Integer(11), new Cell(se, errorAction));
+		s4.addNextState(new Integer(12), new Cell(se, errorAction));
+		s4.addNextState(new Integer(13), new Cell(se, errorAction));
+		s4.addNextState(new Integer(14), new Cell(se, errorAction));
+		s4.addNextState(new Integer(15), new Cell(se, errorAction));
+		s4.addNextState(new Integer(16), new Cell(se, errorAction));
+		s4.addNextState(new Integer(17), new Cell(se, errorAction));
+		s4.addNextState(new Integer(18), new Cell(se, errorAction));
+		s4.addNextState(new Integer(19), new Cell(se, errorAction));
+		s4.addNextState(new Integer(-1), new Cell(se, errorAction));
 	}
 
 	public void createState5() {
-		s5.addNextState(new Integer(1), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(2), new Cell(s5, consumeAction));
-		s5.addNextState(new Integer(3), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(4), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(5), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(6), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(7), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(8), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(9), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(10), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(11), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(12), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(13), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(14), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(15), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(16), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(17), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(18), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(19), new Cell(se, notConsumeAction));
-		s5.addNextState(new Integer(-1), new Cell(se, notConsumeAction));
+		s5.addNextState(new Integer(1), new Cell(se, errorAction));
+		s5.addNextState(new Integer(2), new Cell(se, errorAction));
+		s5.addNextState(new Integer(3), new Cell(se, errorAction));
+		s5.addNextState(new Integer(4), new Cell(se, errorAction));
+		s5.addNextState(new Integer(5), new Cell(se, errorAction));
+		s5.addNextState(new Integer(6), new Cell(se, errorAction));
+		s5.addNextState(new Integer(7), new Cell(se, errorAction));
+		s5.addNextState(new Integer(8), new Cell(se, errorAction));
+		s5.addNextState(new Integer(9), new Cell(se, errorAction));
+		s5.addNextState(new Integer(10), new Cell(se, errorAction));
+		s5.addNextState(new Integer(11), new Cell(s6, consumeAction));
+		s5.addNextState(new Integer(12), new Cell(se, errorAction));
+		s5.addNextState(new Integer(13), new Cell(se, errorAction));
+		s5.addNextState(new Integer(14), new Cell(se, errorAction));
+		s5.addNextState(new Integer(15), new Cell(se, errorAction));
+		s5.addNextState(new Integer(16), new Cell(se, errorAction));
+		s5.addNextState(new Integer(17), new Cell(se, errorAction));
+		s5.addNextState(new Integer(18), new Cell(se, errorAction));
+		s5.addNextState(new Integer(19), new Cell(se, errorAction));
+		s5.addNextState(new Integer(-1), new Cell(se, errorAction));
 	}
 
 	public void createState6() {
 		s6.addNextState(new Integer(1), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(2), new Cell(s6, consumeAction));
-		s6.addNextState(new Integer(3), new Cell(s7, consumeAction));
+		s6.addNextState(new Integer(3), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(4), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(5), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(6), new Cell(s6, consumeAction));
@@ -293,80 +306,103 @@ public class AnalizerFactory {
 		s6.addNextState(new Integer(13), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(14), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(15), new Cell(s6, consumeAction));
-		s6.addNextState(new Integer(16), new Cell(se, consumeAction));
-		s6.addNextState(new Integer(17), new Cell(se, errorAction));
+		s6.addNextState(new Integer(16), new Cell(s6, consumeAction));
+		s6.addNextState(new Integer(17), new Cell(se, commentAction));
 		s6.addNextState(new Integer(18), new Cell(s6, consumeAction));
 		s6.addNextState(new Integer(19), new Cell(s6, consumeAction));
-		s6.addNextState(new Integer(-1), new Cell(se, consumeAction));
+		s6.addNextState(new Integer(-1), new Cell(s6, consumeAction));
 	}
 
 	public void createState7() {
-		s7.addNextState(new Integer(1), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(2), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(3), new Cell(s7, consumeAction));
-		s7.addNextState(new Integer(4), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(5), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(6), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(7), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(8), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(9), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(10), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(11), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(12), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(13), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(14), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(15), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(16), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(17), new Cell(s6, deleteCharAction));// deleteAction
-		s7.addNextState(new Integer(18), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(19), new Cell(s6, consumeAction));
-		s7.addNextState(new Integer(-1), new Cell(se, consumeAction));
+		s7.addNextState(new Integer(1), new Cell(s7, consumeAction));
+		s7.addNextState(new Integer(2), new Cell(s7, consumeAction));
+		s7.addNextState(new Integer(3), new Cell(se, idAction));
+		s7.addNextState(new Integer(4), new Cell(se, idAction));
+		s7.addNextState(new Integer(5), new Cell(se, idAction));
+		s7.addNextState(new Integer(6), new Cell(se, idAction));
+		s7.addNextState(new Integer(7), new Cell(se, idAction));
+		s7.addNextState(new Integer(8), new Cell(se, idAction));
+		s7.addNextState(new Integer(9), new Cell(se, idAction));
+		s7.addNextState(new Integer(10), new Cell(se, idAction));
+		s7.addNextState(new Integer(11), new Cell(se, idAction));
+		s7.addNextState(new Integer(12), new Cell(se, idAction));
+		s7.addNextState(new Integer(13), new Cell(se, idAction));
+		s7.addNextState(new Integer(14), new Cell(se, idAction));
+		s7.addNextState(new Integer(15), new Cell(se, idAction));
+		s7.addNextState(new Integer(16), new Cell(se, idAction));
+		s7.addNextState(new Integer(17), new Cell(se, idAction));// deleteAction
+		s7.addNextState(new Integer(18), new Cell(se, idAction));
+		s7.addNextState(new Integer(19), new Cell(se, idAction));
+		s7.addNextState(new Integer(-1), new Cell(se, idAction));
 	}
 
 	public void createState8() {
-		s8.addNextState(new Integer(1), new Cell(se, errorAction));
-		s8.addNextState(new Integer(2), new Cell(se, errorAction));
-		s8.addNextState(new Integer(3), new Cell(se, errorAction));
-		s8.addNextState(new Integer(4), new Cell(se, errorAction));
-		s8.addNextState(new Integer(5), new Cell(se, errorAction));
-		s8.addNextState(new Integer(6), new Cell(se, errorAction));
-		s8.addNextState(new Integer(7), new Cell(se, errorAction));
-		s8.addNextState(new Integer(8), new Cell(se, errorAction));
-		s8.addNextState(new Integer(9), new Cell(se, errorAction));
-		s8.addNextState(new Integer(10), new Cell(se, errorAction));
-		s8.addNextState(new Integer(11), new Cell(s9, emptyAction));
-		s8.addNextState(new Integer(12), new Cell(se, errorAction));
-		s8.addNextState(new Integer(13), new Cell(se, errorAction));
-		s8.addNextState(new Integer(14), new Cell(se, errorAction));
-		s8.addNextState(new Integer(15), new Cell(se, errorAction));
-		s8.addNextState(new Integer(16), new Cell(se, errorAction));
-		s8.addNextState(new Integer(17), new Cell(se, errorAction));
-		s8.addNextState(new Integer(18), new Cell(se, errorAction));
-		s8.addNextState(new Integer(19), new Cell(se, errorAction));
-		s8.addNextState(new Integer(-1), new Cell(se, errorAction));
+		s8.addNextState(new Integer(1), new Cell(se, constAction));
+		s8.addNextState(new Integer(2), new Cell(s8, consumeAction));
+		s8.addNextState(new Integer(3), new Cell(se, constAction));
+		s8.addNextState(new Integer(4), new Cell(se, constAction));
+		s8.addNextState(new Integer(5), new Cell(se, constAction));
+		s8.addNextState(new Integer(6), new Cell(se, constAction));
+		s8.addNextState(new Integer(7), new Cell(se, constAction));
+		s8.addNextState(new Integer(8), new Cell(se, constAction));
+		s8.addNextState(new Integer(9), new Cell(se, constAction));
+		s8.addNextState(new Integer(10), new Cell(se, constAction));
+		s8.addNextState(new Integer(11), new Cell(se, constAction));
+		s8.addNextState(new Integer(12), new Cell(se, constAction));
+		s8.addNextState(new Integer(13), new Cell(se, constAction));
+		s8.addNextState(new Integer(14), new Cell(se, constAction));
+		s8.addNextState(new Integer(15), new Cell(se, constAction));
+		s8.addNextState(new Integer(16), new Cell(se, constAction));
+		s8.addNextState(new Integer(17), new Cell(se, constAction));
+		s8.addNextState(new Integer(18), new Cell(se, constAction));
+		s8.addNextState(new Integer(19), new Cell(se, constAction));
+		s8.addNextState(new Integer(-1), new Cell(se, constAction));
 	}
 
 	public void createState9() {
-		s9.addNextState(new Integer(1), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(2), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(3), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(4), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(5), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(6), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(7), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(8), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(9), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(10), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(11), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(12), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(13), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(14), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(15), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(16), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(17), new Cell(se, emptyAction));
-		s9.addNextState(new Integer(18), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(19), new Cell(s9, emptyAction));
-		s9.addNextState(new Integer(-1), new Cell(se, emptyAction));
+		s9.addNextState(new Integer(1), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(2), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(3), new Cell(s10, consumeAction));
+		s9.addNextState(new Integer(4), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(5), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(6), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(7), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(8), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(9), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(10), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(11), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(12), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(13), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(14), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(15), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(16), new Cell(se, stringAction));
+		s9.addNextState(new Integer(17), new Cell(se, errorAction));
+		s9.addNextState(new Integer(18), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(19), new Cell(s9, consumeAction));
+		s9.addNextState(new Integer(-1), new Cell(s9, consumeAction));
+	}
+        
+        public void createState10() {
+		s10.addNextState(new Integer(1), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(2), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(3), new Cell(s10, consumeAction));
+		s10.addNextState(new Integer(4), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(5), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(6), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(7), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(8), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(9), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(10), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(11), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(12), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(13), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(14), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(15), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(16), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(17), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(18), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(19), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(-1), new Cell(se, consumeAction));
 	}
 
 	public void createEndState() {

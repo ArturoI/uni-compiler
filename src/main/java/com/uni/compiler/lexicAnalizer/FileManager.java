@@ -8,7 +8,8 @@ import java.io.InputStreamReader;
 public class FileManager {
 
 	private BufferedReader source;
-
+        private int lineNumber = 1;
+        
 	public FileManager(String path) {
 		try {
 			source = new BufferedReader(new InputStreamReader(
@@ -18,21 +19,18 @@ public class FileManager {
 		}
 	}
 
-	public String readLine() {
-		String line = "";
-		try {
-			line = source.readLine();
-		} catch (IOException e) {
-			System.out.println("Error reading the line" + e);
-		}
-		return line;
-	}
+        public int getLineNumber() { return this.lineNumber; }
 
 	public Character readChar() throws IOException {
 		int character;
 		while ((character = source.read()) != -1) {
-			return (char) character;
+                    Character c = (char) character;
+                    if (c.equals('\n')){
+                        lineNumber++;    
+                    }
+                    return c;
 		}
+                source.close();
 		return null;
 	}
 

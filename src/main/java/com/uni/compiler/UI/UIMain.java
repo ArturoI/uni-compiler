@@ -392,14 +392,14 @@ public class UIMain extends javax.swing.JFrame {
             while ((t = this.la.getToken()) != null) {
 
                 if (t.hasError()){
-                    errorPanel.setNormal(t.getError());
+                    errorPanel.setNormal("Error en linea " + t.getLine() +": " + t.getError());
                     errorPanel.newLine();
                     // Hacer dibujito de error en la linea
                     //linePanel.setCursor(searchLine(jTextPane2, t.getLinea()));
                     //linePanel.setIcon("..\\icoError11.png");
                 }
                 if (t.hasWarning()){
-                    errorPanel.setNormal(t.getWarning());
+                    errorPanel.setNormal("Warning en linea " + t.getLine() +": " + t.getWarning());
                     errorPanel.newLine();
                     // Hacer dibujito de warning en la linea
                     //linePanel.setCursor(searchLine(jTextPane2,t.getLinea()));
@@ -407,22 +407,22 @@ public class UIMain extends javax.swing.JFrame {
                 }
                 if(!t.hasError()) {
                     if(this.la.getReservedWordsTable().containsKey(t.getToken())){
-                        lexPanel.setCursiva("Palabra Reservada : ");
+                        lexPanel.setCursiva("linea " + t.getLine() + ": Palabra Reservada : ");
                         lexPanel.setNegrita(t.getToken());
                         lexPanel.newLine();
                     }else{
-                        if(t.getType().equals("identificador")){
+                        if(t.getType().equals("linea " + t.getLine() + ": Identificador")){
                             lexPanel.setCursiva(t.getType()+ " : ");
                             lexPanel.setNegrita("<" + t.getToken() +">");
                             lexPanel.newLine();
 
                         }else{
-                            if(t.getType().equals("constante") || t.getType().equals("comentario") || t.getType().equals("cadena")){
-                                lexPanel.setCursiva(t.getType()+ " : ");
+                            if(!t.getType().equals("")){
+                                lexPanel.setCursiva("linea " + t.getLine() + ": " + t.getType() + " : ");
                                 lexPanel.setNegrita(t.getToken());
                                 lexPanel.newLine();
                             } else {
-                                lexPanel.setNegrita(t.getToken());
+                                lexPanel.setNegrita("linea " + t.getLine() + ": " + t.getToken());
                                 lexPanel.newLine();
                             }
                         }

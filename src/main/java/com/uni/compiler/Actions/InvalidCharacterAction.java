@@ -10,7 +10,7 @@ public class InvalidCharacterAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
+		//lexicAnalizer.inicToken();
 		nextToken = lexicAnalizer.getTokenInConstruction();
 		nextToken.setError("Invalid Character");
 	}

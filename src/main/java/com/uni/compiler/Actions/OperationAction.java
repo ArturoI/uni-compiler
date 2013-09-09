@@ -10,10 +10,10 @@ public class OperationAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
+		//lexicAnalizer.inicToken();
 		nextToken = lexicAnalizer.getTokenInConstruction();
 		nextToken.setLexema(String.valueOf(c));
-		nextToken.setTokenType(String.valueOf(c));
+		nextToken.setTokenType("Operacion");
 	}
 
 }

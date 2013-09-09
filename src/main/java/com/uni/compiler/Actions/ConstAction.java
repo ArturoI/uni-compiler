@@ -10,10 +10,10 @@ public class ConstAction extends Action {
 
 	@Override
 	public void executeAction(Character c) {
-		lexicAnalizer.inicToken();
+		//lexicAnalizer.inicToken();
+                lexicAnalizer.saveCharacter(c);
 		nextToken = lexicAnalizer.getTokenInConstruction();
-		nextToken.addChar(c);
-		nextToken.setTokenType("constante");
+		nextToken.setTokenType("Constante");
 	}
 
 }
