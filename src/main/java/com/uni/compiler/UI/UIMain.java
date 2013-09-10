@@ -13,6 +13,7 @@ package com.uni.compiler.UI;
 
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 import com.uni.compiler.lexicAnalizer.Token;
+import com.uni.compiler.parser.Parser;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -40,6 +41,7 @@ public class UIMain extends javax.swing.JFrame {
     private String archivo;
     
     private LexicAnalizer la;
+    private Parser parser;
 
 
 	{
@@ -358,7 +360,7 @@ public class UIMain extends javax.swing.JFrame {
                 
                 this.la = new LexicAnalizer(this.path);
                 
-                //crear el parser
+                parser = new Parser(la,this,true);
                 
 
             break;
@@ -375,8 +377,11 @@ public class UIMain extends javax.swing.JFrame {
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.ButtonST.setEnabled(true);        
+        
         //ejecutar el parser
-
+        parser.run();
+        
+        /*
         //Panel de Errores
         Style errorPanel = new Style(this.jTextPane1);
         //Panel de Lexema
@@ -389,7 +394,7 @@ public class UIMain extends javax.swing.JFrame {
 
         Token t;
         try {
-            while ((t = this.la.getToken()) != null) {
+            while ((t = this.la.getToken()) != null && !t.getType().equals("EOF")) {
 
                 if (t.hasError()){
                     errorPanel.setNormal("Error en linea " + t.getLine() +": " + t.getError());
@@ -433,6 +438,7 @@ public class UIMain extends javax.swing.JFrame {
             System.out.println("An exception was trhown \n - Cause: " + e.getCause()
                              + "\n Message: " + e.getMessage());
         }
+        */
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ButtonRWTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRWTActionPerformed

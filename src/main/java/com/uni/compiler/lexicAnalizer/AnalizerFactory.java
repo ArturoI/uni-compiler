@@ -33,6 +33,7 @@ public class AnalizerFactory {
 	private State s8 = new State("EighthState");
 	private State s9 = new State("NinthState");
 	private State s10 = new State("TenthState");
+        private State s11 = new State("EleventhState");
 
 	private State se = new State("EndState");
 
@@ -65,6 +66,7 @@ public class AnalizerFactory {
 		errorAction = new ErrorAction(lexicAnalizer);
 		commentAction = new CommentAction(lexicAnalizer);
 		comparatorAction = new ComparatorAction(lexicAnalizer);
+                
 
 		createEndState();
                 createState10();
@@ -168,8 +170,10 @@ public class AnalizerFactory {
                 if (state == 10) {
 			return s10;
 		}
-                
-		if (state == 11) {
+                if (state == 11){
+                    return s11;
+                }
+		if (state == 12) {
 			return se;
 		}
 		return null;
@@ -406,7 +410,7 @@ public class AnalizerFactory {
 	}
 
 	public void createEndState() {
-		se.addNextState(new Integer(1), new Cell(s1, emptyAction));
+		/*se.addNextState(new Integer(1), new Cell(s1, emptyAction));
 		se.addNextState(new Integer(2), new Cell(s1, emptyAction));
 		se.addNextState(new Integer(3), new Cell(s1, emptyAction));
 		se.addNextState(new Integer(4), new Cell(s1, emptyAction));
@@ -425,7 +429,7 @@ public class AnalizerFactory {
 		se.addNextState(new Integer(17), new Cell(s1, emptyAction));
 		se.addNextState(new Integer(18), new Cell(s1, emptyAction));
 		se.addNextState(new Integer(19), new Cell(s1, emptyAction));
-		se.addNextState(new Integer(-1), new Cell(s1, emptyAction));
+		se.addNextState(new Integer(-1), new Cell(s1, emptyAction));*/
 	}
 
 	public State getBeginState() {

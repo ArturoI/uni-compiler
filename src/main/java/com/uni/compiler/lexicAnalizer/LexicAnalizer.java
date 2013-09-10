@@ -2,10 +2,13 @@ package com.uni.compiler.lexicAnalizer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class LexicAnalizer {
+public class LexicAnalizer implements Enumeration {
 	private FileManager source;
 	private List<String> symbolsTable = new ArrayList<String>();
 	private AnalizerFactory analizerFactory = AnalizerFactory.getInstance(this);
@@ -51,12 +54,13 @@ public class LexicAnalizer {
 		
                 while (!currentState.isFinal()){
                     charac = source.readChar();
-                    if (charac != null) {
+                    if (charac != null && source.hasMoreElement()) {
                         Integer c = charMapping(charac);
 			nextState = currentState.getNextState(c);
 			currentState.getAction(c).executeAction(charac);
 			currentState = nextState;
-                
+                    } else {
+                        nextToken.setTokenType("EOF");
                     }
                 }
                 
@@ -74,17 +78,17 @@ public class LexicAnalizer {
                     String value = reservedWords.get(nextToken.getToken());
                     if (value != null){ nextToken.setTokenType("Palabra reservada"); }
                 }
-                
-                
-                
-                
 		
+                if (nextToken.getType().equals("EOF")){
+                     System.out.println("ULTIMO TOKEN");
+                }
                 return nextToken;
 
 	}
 
 	public Token getToken() throws IOException {
-		Token currentToken = createToken();
+            if (source.hasMoreElement()){
+                Token currentToken = createToken();
 		// We don't need the comments.
                 if (currentToken.getType() == "Comentario") {
 			currentToken = createToken();
@@ -111,6 +115,11 @@ public class LexicAnalizer {
 
 		addToSymbolsTable(currentToken);
 		return currentToken;
+            } else {
+                Token last = new Token();
+                last.setTokenType("EOF");
+                return last;
+            }
 	}
 
 	public void addToSymbolsTable(Token t) {
@@ -201,5 +210,20 @@ public class LexicAnalizer {
         public List<String> getSymbolsTable (){
             return this.symbolsTable;
         }
-
+        
+        @Override
+        public boolean hasMoreElements() {
+            return source.hasMoreElement();
+        }
+        
+        @Override
+        public Token nextElement(){
+            try {
+                return getToken();
+            } catch (IOException ex) {
+                Logger.getLogger(LexicAnalizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return null;
+        }
+        
 }
