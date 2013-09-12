@@ -13,11 +13,11 @@ public class FileManager {
         
 	public FileManager(String path) {
             try {
-                    hasMore = true;
-                    source = new BufferedReader(new InputStreamReader(
-                                    new FileInputStream(path)));
+                hasMore = true;
+                source = new BufferedReader(new InputStreamReader(
+                                new FileInputStream(path)));                
             } catch (IOException e) {
-                    System.out.println("Error File not found" + e);
+                System.out.println("Error File not found" + e);
             }
 	}
 
@@ -34,7 +34,7 @@ public class FileManager {
             }
             source.close();
             hasMore = false;
-            return '\t';
+            return null;
 	}
         
         public boolean hasMoreElement(){

@@ -13,7 +13,10 @@ import com.uni.compiler.Actions.ErrorAction;
 import com.uni.compiler.Actions.IdAction;
 import com.uni.compiler.Actions.InvalidCharacterAction;
 import com.uni.compiler.Actions.NCComparatorAction;
+import com.uni.compiler.Actions.NegativeConstAction;
+import com.uni.compiler.Actions.NoConsumeAction;
 import com.uni.compiler.Actions.OperationAction;
+import com.uni.compiler.Actions.OperationNCAction;
 import com.uni.compiler.Actions.StringAction;
 
 public class AnalizerFactory {
@@ -34,34 +37,41 @@ public class AnalizerFactory {
 	private State s9 = new State("NinthState");
 	private State s10 = new State("TenthState");
         private State s11 = new State("EleventhState");
-
+        private State s12 = new State("TwelvethState");
+        
 	private State se = new State("EndState");
 
 	// actions
 	private Action idAction = null;
 	private Action constAction = null;
+        private Action negativeConstAction = null;
 	private Action stringAction = null;
 	private Action emptyAction = null;
 	private Action invalidCharacterAction = null;
 	private Action operationAction = null;
+        private Action operationNCAction = null;
 	private Action consumeAction = null;
+        private Action noConsumeAction = null;
 	private Action ncComparatorAction = null;
 	private Action errorAction = null;
 	private Action commentAction = null;
 	private Action comparatorAction = null;
         private Action assignAction = null;
 
-	private AnalizerFactory(LexicAnalizer la) {
+	public AnalizerFactory(LexicAnalizer la) {
 		lexicAnalizer = la;
                 
 		idAction = new IdAction(lexicAnalizer);
 		constAction = new ConstAction(lexicAnalizer);
+                negativeConstAction = new NegativeConstAction(lexicAnalizer);
 		stringAction = new StringAction(lexicAnalizer);
 		emptyAction = new EmptyAction();
 		invalidCharacterAction = new InvalidCharacterAction(lexicAnalizer);
                 assignAction = new AssignAction(lexicAnalizer);
 		operationAction = new OperationAction(lexicAnalizer);
+                operationNCAction = new OperationNCAction(lexicAnalizer);
 		consumeAction = new ConsumeAction(lexicAnalizer);
+                noConsumeAction = new NoConsumeAction(lexicAnalizer);
 		ncComparatorAction = new NCComparatorAction(lexicAnalizer);
 		errorAction = new ErrorAction(lexicAnalizer);
 		commentAction = new CommentAction(lexicAnalizer);
@@ -69,6 +79,8 @@ public class AnalizerFactory {
                 
 
 		createEndState();
+                createState12();
+                createState11();
                 createState10();
 		createState9();
 		createState8();
@@ -82,7 +94,7 @@ public class AnalizerFactory {
 
 	}
 
-	public static void createInstance(LexicAnalizer la) {
+	/*public static void createInstance(LexicAnalizer la) {
 		if (analizerFactory == null) {
 			synchronized (AnalizerFactory.class) {
 				if (analizerFactory == null) {
@@ -90,12 +102,7 @@ public class AnalizerFactory {
 				}
 			}
 		}
-	}
-
-	public static AnalizerFactory getInstance(LexicAnalizer la) {
-		createInstance(la);
-		return analizerFactory;
-	}
+	}*/
 
 	public HashMap<String, String> createReservedWords() {
 		// commons reserved words
@@ -105,7 +112,7 @@ public class AnalizerFactory {
 		reservedWords.put("begin", "begin");
 		reservedWords.put("end", "end");
 		reservedWords.put("print", "print");
-		reservedWords.put("fuction", "fuction");
+		reservedWords.put("function", "function");
 		reservedWords.put("return", "return");
 
 		// special reserved words
@@ -183,7 +190,7 @@ public class AnalizerFactory {
 		s1.addNextState(new Integer(1), new Cell(s7, consumeAction));
 		s1.addNextState(new Integer(2), new Cell(s8, consumeAction));
 		s1.addNextState(new Integer(3), new Cell(se, operationAction));
-		s1.addNextState(new Integer(4), new Cell(se, operationAction));
+		s1.addNextState(new Integer(4), new Cell(s11, consumeAction));
 		s1.addNextState(new Integer(5), new Cell(se, operationAction));
 		s1.addNextState(new Integer(6), new Cell(s2, consumeAction));
 		s1.addNextState(new Integer(7), new Cell(s3, consumeAction));
@@ -408,6 +415,52 @@ public class AnalizerFactory {
 		s10.addNextState(new Integer(19), new Cell(s9, consumeAction));
 		s10.addNextState(new Integer(-1), new Cell(se, consumeAction));
 	}
+        
+        public void createState11() {
+		s11.addNextState(new Integer(1), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(2), new Cell(s12, consumeAction));
+		s11.addNextState(new Integer(3), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(4), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(5), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(6), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(7), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(8), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(9), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(10), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(11), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(12), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(13), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(14), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(15), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(16), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(17), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(18), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(19), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(-1), new Cell(se, operationNCAction));
+        }
+        
+        public void createState12() {
+		s12.addNextState(new Integer(1), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(2), new Cell(s12, negativeConstAction));
+		s12.addNextState(new Integer(3), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(4), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(5), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(6), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(7), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(8), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(9), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(10), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(11), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(12), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(13), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(14), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(15), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(16), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(17), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(18), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(19), new Cell(se, noConsumeAction));
+		s12.addNextState(new Integer(-1), new Cell(se, noConsumeAction));
+        }
 
 	public void createEndState() {
 		/*se.addNextState(new Integer(1), new Cell(s1, emptyAction));

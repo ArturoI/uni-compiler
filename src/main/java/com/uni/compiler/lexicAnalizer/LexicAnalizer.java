@@ -11,13 +11,12 @@ import java.util.logging.Logger;
 public class LexicAnalizer implements Enumeration {
 	private FileManager source;
 	private List<String> symbolsTable = new ArrayList<String>();
-	private AnalizerFactory analizerFactory = AnalizerFactory.getInstance(this);
+	private AnalizerFactory analizerFactory;
 	public int line = 1;
 	private Token nextToken = null;
 	private Character oldChracter = null;
 
-	private HashMap<String, String> reservedWords = analizerFactory
-			.createReservedWords();
+	private HashMap<String, String> reservedWords;
 
 	public Token getTokenInConstruction() {
 		return nextToken;
@@ -31,6 +30,8 @@ public class LexicAnalizer implements Enumeration {
 
 	public LexicAnalizer(String path) {
 		source = new FileManager(path);
+                this.analizerFactory = new AnalizerFactory(this);
+                this.reservedWords = this.analizerFactory.createReservedWords();
 	}
 
 	public void saveCharacter(Character c) {
@@ -52,9 +53,9 @@ public class LexicAnalizer implements Enumeration {
                     oldChracter = null;   
 		}
 		
-                while (!currentState.isFinal()){
+                while (!currentState.isFinal() && source.hasMoreElement()){
                     charac = source.readChar();
-                    if (charac != null && source.hasMoreElement()) {
+                    if (charac != null) {
                         Integer c = charMapping(charac);
 			nextState = currentState.getNextState(c);
 			currentState.getAction(c).executeAction(charac);
@@ -79,9 +80,6 @@ public class LexicAnalizer implements Enumeration {
                     if (value != null){ nextToken.setTokenType("Palabra reservada"); }
                 }
 		
-                if (nextToken.getType().equals("EOF")){
-                     System.out.println("ULTIMO TOKEN");
-                }
                 return nextToken;
 
 	}
@@ -89,34 +87,41 @@ public class LexicAnalizer implements Enumeration {
 	public Token getToken() throws IOException {
             if (source.hasMoreElement()){
                 Token currentToken = createToken();
-		// We don't need the comments.
+                
                 if (currentToken.getType() == "Comentario") {
-			currentToken = createToken();
-		}
-
-		if (currentToken.getType().equals("Constante")) {
-			double d = Math.pow(2, 32) - 1;
+                    currentToken = createToken();
+		} else {
+                    if (currentToken.getType().equals("Constante Positiva")) {
+			double d = Math.pow(2, 15) - 1;
 			double a = new Double(currentToken.getToken());
 			if (a > d) {
-				currentToken.setError("Error in line: " + line
-						+ "constant out of range");
+				currentToken.setError("Constante fuera de rango, maximo valor = 32767");
 			}
-		} else {
-			if (currentToken.getType().equals("Identificador")) {
-				if (currentToken.getToken().length() > 15) {
-					String tokenValue = String.copyValueOf(currentToken
-							.getToken().toCharArray(), 0, 15);
-					currentToken.setToken(tokenValue);
-					currentToken.setWarning("Warning in line: " + line
-							+ " Identifier too long");
-				}
-			}
-		}
+                    } else {
+                        if (currentToken.getType().equals("Constante Negativa")) {
+                            double nd = (Math.pow(2, 15)) * -1;
+                            double a = new Double(currentToken.getToken());
+                            if (nd > a) {
+                                    currentToken.setError("Constante fuera de rango, minimo valor = -32768");
+                            }
+                        } else {
+                            if (currentToken.getType().equals("Identificador")) {
+                                if (currentToken.getToken().length() > 15) {
+                                    String tokenValue = String.copyValueOf(currentToken
+                                                    .getToken().toCharArray(), 0, 15);
+                                    currentToken.setToken(tokenValue);
+                                    currentToken.setWarning("Identifier too long");
+                                }
+                            }
+                        }
+                    }
+                }
 
 		addToSymbolsTable(currentToken);
 		return currentToken;
             } else {
                 Token last = new Token();
+                last.setLexema("FIN DEL ARCHIVO");
                 last.setTokenType("EOF");
                 return last;
             }
@@ -131,12 +136,12 @@ public class LexicAnalizer implements Enumeration {
                    ) {
 
 			symbolsTable.add(t.getToken());
-			System.out.println("[V] Token added line: " + line + " TokenType: "
-					+ t.getType() + " Token: " + t.getToken());
+			//System.out.println("[V] Token added line: " + line + " TokenType: "
+			//		+ t.getType() + " Token: " + t.getToken());
 		} else {
-			System.out.println("[X] Token NOT added to the symbol table. line: "
-					+ line + " TokenType: " + t.getType() + " Token: "
-					+ t.getToken());
+			//System.out.println("[X] Token NOT added to the symbol table. line: "
+			//		+ line + " TokenType: " + t.getType() + " Token: "
+			//		+ t.getToken());
 		}
 
 	}

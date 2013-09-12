@@ -43,7 +43,6 @@ public class UIMain extends javax.swing.JFrame {
     private LexicAnalizer la;
     private Parser parser;
 
-
 	{
 	//Set Look & Feel
             try {
@@ -358,9 +357,6 @@ public class UIMain extends javax.swing.JFrame {
 
                 //crear el analizador lexico
                 
-                this.la = new LexicAnalizer(this.path);
-                
-                parser = new Parser(la,this,true);
                 
 
             break;
@@ -376,8 +372,13 @@ public class UIMain extends javax.swing.JFrame {
         return nro;
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
         this.ButtonST.setEnabled(true);        
         
+        this.la = new LexicAnalizer(this.path);
+                
+        parser = new Parser(la,this,false);
+                
         //ejecutar el parser
         parser.run();
         
@@ -389,9 +390,9 @@ public class UIMain extends javax.swing.JFrame {
         //Panel para marcar errores
         Style linePanel = new Style(this.jTextPane2);
         
-
+        
         //pido los tokens
-
+        
         Token t;
         try {
             while ((t = this.la.getToken()) != null && !t.getType().equals("EOF")) {
@@ -438,30 +439,34 @@ public class UIMain extends javax.swing.JFrame {
             System.out.println("An exception was trhown \n - Cause: " + e.getCause()
                              + "\n Message: " + e.getMessage());
         }
+        
         */
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ButtonRWTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRWTActionPerformed
 
         DefaultListModel modelo = new DefaultListModel();
-
+        
         if(ButtonRWT.isSelected()){
             this.ButtonST.setSelected(false);
-            
-            HashMap tpr = this.la.getReservedWordsTable();
 
-            Iterator it = tpr.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry)it.next();
-                modelo.addElement(pairs.getValue());
-                it.remove(); // avoids a ConcurrentModificationException
-            }
+            modelo.addElement("if");
+            modelo.addElement("else");
+            modelo.addElement("then");
+            modelo.addElement("begin");
+            modelo.addElement("end");
+            modelo.addElement("print");
+            modelo.addElement("function");
+            modelo.addElement("return");
+            modelo.addElement("import");
+            modelo.addElement("int");
+            modelo.addElement("loop");
+            modelo.addElement("until");
             
             List.setModel(modelo);
             List.setVisible(true);
         }
-        //cargo la lista de palabras reservadas
-            
+        //cargo la lista de palabras reservadas    
         else{
             List.setVisible(false);
         }
