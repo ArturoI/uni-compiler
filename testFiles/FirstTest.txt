@@ -1,13 +1,42 @@
-int a, b, sarasa, a1234, abcdefghijklmnopqrstuvwxyz;
+int a, b, g, asdfghjklqwertyuiopzxcvbnm;
+?
 
-function f1 ()
+function id
 begin
-	import a, b;
-	int aux;
-	if (b > a) then
+int a, b;
+print ("aaassss");
+a = 0;
+return(a);
+if (a == 2) then
+	f = 0;
+else
 	begin
-		aux = a;
-		a = b;
-		b = aux;
+		loop
+			a = 3;
+			f = 2 + 3;
+		until (a > f)
 	end
+	return(f-a);
 end
+
+loop
+	o = 0;
+until (3 == )
+
+int a = 0;
+
+print"aaa");
+print("aaaaa")
+
+loop
+	a = 0;
+	if (a == 0) then
+		begin
+			a = 1;
+			a = 2;
+		end
+	else
+		print("si no exploto hasta aca vamos bien");
+until (1 > 2)
+
+int a;
