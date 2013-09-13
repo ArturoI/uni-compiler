@@ -14,7 +14,7 @@ public class ErrorAction extends Action{
 	public void executeAction(Character c) {
 		lexicAnalizer.saveCharacter(c);
 		nextToken=lexicAnalizer.getTokenInConstruction();
-		nextToken.setError("Invalid Token");
+		nextToken.setError("Token Invalido");
 	}
 
 }

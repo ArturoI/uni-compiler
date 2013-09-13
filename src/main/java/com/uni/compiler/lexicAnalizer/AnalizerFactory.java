@@ -8,6 +8,7 @@ import com.uni.compiler.Actions.CommentAction;
 import com.uni.compiler.Actions.ConstAction;
 import com.uni.compiler.Actions.ConsumeAction;
 import com.uni.compiler.Actions.ComparatorAction;
+import com.uni.compiler.Actions.DeleteLastCharAction;
 import com.uni.compiler.Actions.EmptyAction;
 import com.uni.compiler.Actions.ErrorAction;
 import com.uni.compiler.Actions.IdAction;
@@ -16,7 +17,7 @@ import com.uni.compiler.Actions.NCComparatorAction;
 import com.uni.compiler.Actions.NegativeConstAction;
 import com.uni.compiler.Actions.NoConsumeAction;
 import com.uni.compiler.Actions.OperationAction;
-import com.uni.compiler.Actions.OperationNCAction;
+import com.uni.compiler.Actions.NCOperationAction;
 import com.uni.compiler.Actions.StringAction;
 
 public class AnalizerFactory {
@@ -49,7 +50,7 @@ public class AnalizerFactory {
 	private Action emptyAction = null;
 	private Action invalidCharacterAction = null;
 	private Action operationAction = null;
-        private Action operationNCAction = null;
+        private Action ncOperationAction = null;
 	private Action consumeAction = null;
         private Action noConsumeAction = null;
 	private Action ncComparatorAction = null;
@@ -57,6 +58,7 @@ public class AnalizerFactory {
 	private Action commentAction = null;
 	private Action comparatorAction = null;
         private Action assignAction = null;
+        private Action deleteLastCharAction = null;
 
 	public AnalizerFactory(LexicAnalizer la) {
 		lexicAnalizer = la;
@@ -69,13 +71,14 @@ public class AnalizerFactory {
 		invalidCharacterAction = new InvalidCharacterAction(lexicAnalizer);
                 assignAction = new AssignAction(lexicAnalizer);
 		operationAction = new OperationAction(lexicAnalizer);
-                operationNCAction = new OperationNCAction(lexicAnalizer);
+                ncOperationAction = new NCOperationAction(lexicAnalizer);
 		consumeAction = new ConsumeAction(lexicAnalizer);
                 noConsumeAction = new NoConsumeAction(lexicAnalizer);
 		ncComparatorAction = new NCComparatorAction(lexicAnalizer);
 		errorAction = new ErrorAction(lexicAnalizer);
 		commentAction = new CommentAction(lexicAnalizer);
 		comparatorAction = new ComparatorAction(lexicAnalizer);
+                deleteLastCharAction = new DeleteLastCharAction(lexicAnalizer);
                 
 
 		createEndState();
@@ -410,33 +413,33 @@ public class AnalizerFactory {
 		s10.addNextState(new Integer(14), new Cell(s9, consumeAction));
 		s10.addNextState(new Integer(15), new Cell(s9, consumeAction));
 		s10.addNextState(new Integer(16), new Cell(s9, consumeAction));
-		s10.addNextState(new Integer(17), new Cell(s9, consumeAction));
+		s10.addNextState(new Integer(17), new Cell(s9, deleteLastCharAction));
 		s10.addNextState(new Integer(18), new Cell(s9, consumeAction));
 		s10.addNextState(new Integer(19), new Cell(s9, consumeAction));
 		s10.addNextState(new Integer(-1), new Cell(se, consumeAction));
 	}
         
         public void createState11() {
-		s11.addNextState(new Integer(1), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(1), new Cell(se, ncOperationAction));
 		s11.addNextState(new Integer(2), new Cell(s12, consumeAction));
-		s11.addNextState(new Integer(3), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(4), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(5), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(6), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(7), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(8), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(9), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(10), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(11), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(12), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(13), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(14), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(15), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(16), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(17), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(18), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(19), new Cell(se, operationNCAction));
-		s11.addNextState(new Integer(-1), new Cell(se, operationNCAction));
+		s11.addNextState(new Integer(3), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(4), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(5), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(6), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(7), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(8), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(9), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(10), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(11), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(12), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(13), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(14), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(15), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(16), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(17), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(18), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(19), new Cell(se, ncOperationAction));
+		s11.addNextState(new Integer(-1), new Cell(se, ncOperationAction));
         }
         
         public void createState12() {

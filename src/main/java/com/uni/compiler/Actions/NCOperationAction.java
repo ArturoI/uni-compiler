@@ -2,9 +2,9 @@ package com.uni.compiler.Actions;
 
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 
-public class OperationNCAction extends Action {
+public class NCOperationAction extends Action {
 
-	public OperationNCAction(LexicAnalizer la) {
+	public NCOperationAction(LexicAnalizer la) {
 		lexicAnalizer = la;
 	}
 
