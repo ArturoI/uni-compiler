@@ -11,7 +11,7 @@ import com.uni.compiler.lexicAnalizer.*;
 %token ID INT CTEINT STRING IF THEN ELSE BEGIN END IMPORT MENORIGUAL MAYORIGUAL IGUAL DISTINTO LOOP UNTIL PRINT RETURN FUNCTION
 
 %right THEN ELSE
-%right ';' 
+%right ';'
 %left '+' '-'
 %left '*' '/'
 
@@ -45,7 +45,11 @@ funcion: FUNCTION ID bloqueFuncion
        ;
 
 bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion."); }
-		;
+		| BEGIN END                              { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera el cuerpo de la funcion");  }
+                | declaracionFuncion sentenciasF END     { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera BEGIN");  }
+                | BEGIN declaracionFuncion sentenciasF error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }
+                | '' { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }                                     
+                ;
 
 declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); }
 		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }
@@ -138,7 +142,7 @@ factor: ID
 
 impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");  }
          | PRINT '(' STRING ')' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
-         | PRINT '(' STRING             { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
+         | PRINT '(' STRING error       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
          | PRINT STRING ')'             { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('"); }
          | PRINT '(' ')'                { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba una cadena para imprimir"); }
          | PRINT STRING 		{ showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba () son requeridos para imprimir"); }
@@ -153,7 +157,6 @@ seleccion: IF condicion THEN sentenciaSeleccion                          { showI
          | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }
          | IF condicion error                                            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
-
 
 condicion: '(' exprAritmetica opLogico exprAritmetica ')'
          | exprAritmetica opLogico exprAritmetica ')'            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
@@ -172,14 +175,12 @@ opLogico: '<'
 
 sentenciaSeleccion: BEGIN sentencias END
                   | sentencia
-                 // | sentencias END          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba BEGIN."); }
-                 // | BEGIN sentencias error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba END."); }
                   ;
 
 // ITERACION
 
 iteracion: LOOP sentencias UNTIL condicion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL"); }
-         | LOOP UNTIL condicion            { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
+         | LOOP UNTIL condicion            { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }      
          ;
 
 %%
