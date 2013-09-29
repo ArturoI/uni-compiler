@@ -4,666 +4,667 @@
 
    2  declaraciones : declaraciones declaracion
    3                | declaracion
-   4                | error
 
-   5  declaracion : variables
-   6              | funcion
+   4  declaracion : variables
+   5              | funcion
 
-   7  variables : INT conjVariables ';'
-   8            | INT conjVariables error
+   6  variables : INT conjVariables ';'
+   7            | INT conjVariables error
 
-   9  conjVariables : conjVariables ',' ID
-  10                | ID
+   8  conjVariables : conjVariables ',' ID
+   9                | ID
 
-  11  funcion : FUNCTION ID bloqueFuncion
+  10  funcion : FUNCTION ID bloqueFuncion
 
-  12  bloqueFuncion : BEGIN declaracionFuncion sentenciasF END
+  11  bloqueFuncion : BEGIN declaracionFuncion sentenciasF END
 
-  13  declaracionFuncion : variables
-  14                     | IMPORT conjVariables ';'
+  12  declaracionFuncion : variables
+  13                     | IMPORT conjVariables ';'
 
-  15  sentenciasF : sentenciasF sentenciaF
-  16              | sentenciaF
-  17              | ';'
+  14  sentenciasF : sentenciasF sentenciaF
+  15              | sentenciaF
+  16              | ';'
 
-  18  sentenciaF : asignacion ';'
-  19             | impresion
-  20             | returnF ';'
-  21             | seleccionF
-  22             | iteracionF
+  17  sentenciaF : asignacion ';'
+  18             | impresion
+  19             | returnF ';'
+  20             | seleccionF
+  21             | iteracionF
 
-  23  returnF : RETURN '(' exprAritmetica ')'
-  24          | RETURN error
-  25          | RETURN '(' error
-  26          | RETURN '(' exprAritmetica error
+  22  returnF : RETURN '(' exprAritmetica ')'
+  23          | RETURN error
+  24          | RETURN '(' error
+  25          | RETURN '(' exprAritmetica error
 
-  27  seleccionF : IF condicion THEN sentenciaSeleccionF
-  28             | IF condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF
-  29             | IF condicion sentenciaSeleccionF
+  26  seleccionF : IF condicion THEN sentenciaSeleccionF
+  27             | IF condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF
+  28             | IF condicion sentenciaSeleccionF
 
-  30  sentenciaSeleccionF : BEGIN sentenciasF END
-  31                      | sentenciaF
+  29  sentenciaSeleccionF : BEGIN sentenciasF END
+  30                      | sentenciaF
 
-  32  iteracionF : LOOP sentenciasF UNTIL condicion
-  33             | LOOP UNTIL condicion
+  31  iteracionF : LOOP sentenciasF UNTIL condicion
+  32             | LOOP UNTIL condicion
 
-  34  sentencias : sentencias sentencia
-  35             | sentencia
-  36             | ';'
+  33  sentencias : sentencias sentencia
+  34             | sentencia
+  35             | ';'
 
-  37  sentencia : asignacion ';'
-  38            | impresion
-  39            | seleccion
-  40            | iteracion
-  41            | error
+  36  sentencia : asignacion ';'
+  37            | impresion
+  38            | seleccion
+  39            | iteracion
+  40            | error
 
-  42  asignacion : ID '=' exprAritmetica
-  43             | '=' exprAritmetica
-  44             | ID '=' error
-  45             | ID exprAritmetica
+  41  asignacion : ID '=' exprAritmetica
+  42             | '=' exprAritmetica
+  43             | ID '=' error
+  44             | ID exprAritmetica
 
-  46  exprAritmetica : exprAritmetica '+' termino
-  47                 | exprAritmetica '-' termino
-  48                 | termino
-  49                 | exprAritmetica '+' error
-  50                 | '+' termino
-  51                 | exprAritmetica '-' error
-  52                 | '-' termino
+  45  exprAritmetica : exprAritmetica '+' termino
+  46                 | exprAritmetica '-' termino
+  47                 | termino
+  48                 | exprAritmetica '+' error
+  49                 | '+' termino
+  50                 | exprAritmetica '-' error
+  51                 | '-' termino
 
-  53  termino : termino '*' factor
-  54          | termino '/' factor
-  55          | factor
-  56          | termino '*' error
-  57          | '*' factor
-  58          | termino '/' error
-  59          | '/' factor
+  52  termino : termino '*' factor
+  53          | termino '/' factor
+  54          | factor
+  55          | termino '*' error
+  56          | '*' factor
+  57          | termino '/' error
+  58          | '/' factor
 
-  60  factor : ID
-  61         | CTEINT
+  59  factor : ID
+  60         | CTEINT
 
-  62  impresion : PRINT '(' STRING ')' ';'
-  63            | PRINT '(' STRING ')' error
-  64            | PRINT '(' STRING
-  65            | PRINT STRING ')'
-  66            | PRINT '(' ')'
-  67            | PRINT STRING
-  68            | PRINT '('
-  69            | PRINT ')'
-  70            | PRINT
+  61  impresion : PRINT '(' STRING ')' ';'
+  62            | PRINT '(' STRING ')' error
+  63            | PRINT '(' STRING
+  64            | PRINT STRING ')'
+  65            | PRINT '(' ')'
+  66            | PRINT STRING
+  67            | PRINT '('
+  68            | PRINT ')'
+  69            | PRINT
 
-  71  seleccion : IF condicion THEN sentenciaSeleccion
-  72            | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion
-  73            | IF condicion sentenciaSeleccion
+  70  seleccion : IF condicion THEN sentenciaSeleccion
+  71            | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion
+  72            | IF condicion error
 
-  74  condicion : '(' exprAritmetica opLogico exprAritmetica ')'
-  75            | exprAritmetica opLogico exprAritmetica ')'
-  76            | '(' exprAritmetica opLogico exprAritmetica error
-  77            | '(' opLogico exprAritmetica ')'
-  78            | '(' exprAritmetica opLogico ')'
+  73  condicion : '(' exprAritmetica opLogico exprAritmetica ')'
+  74            | exprAritmetica opLogico exprAritmetica ')'
+  75            | '(' exprAritmetica opLogico exprAritmetica error
+  76            | '(' opLogico exprAritmetica ')'
+  77            | '(' exprAritmetica opLogico ')'
 
-  79  opLogico : '<'
-  80           | MENORIGUAL
-  81           | '>'
-  82           | MAYORIGUAL
-  83           | IGUAL
-  84           | DISTINTO
+  78  opLogico : '<'
+  79           | MENORIGUAL
+  80           | '>'
+  81           | MAYORIGUAL
+  82           | IGUAL
+  83           | DISTINTO
 
-  85  sentenciaSeleccion : BEGIN sentencias END
-  86                     | sentencia
+  84  sentenciaSeleccion : BEGIN sentencias END
+  85                     | sentencia
 
-  87  iteracion : LOOP sentencias UNTIL condicion
-  88            | LOOP UNTIL condicion
+  86  iteracion : LOOP sentencias UNTIL condicion
+  87            | LOOP UNTIL condicion
 
 state 0
 	$accept : . programa $end  (0)
 
-	error  shift 1
-	INT  shift 2
-	FUNCTION  shift 3
+	INT  shift 1
+	FUNCTION  shift 2
 	.  error
 
-	programa  goto 4
-	declaraciones  goto 5
-	declaracion  goto 6
-	variables  goto 7
-	funcion  goto 8
+	programa  goto 3
+	declaraciones  goto 4
+	declaracion  goto 5
+	variables  goto 6
+	funcion  goto 7
 
 
 state 1
-	declaraciones : error .  (4)
+	variables : INT . conjVariables ';'  (6)
+	variables : INT . conjVariables error  (7)
 
-	.  reduce 4
+	ID  shift 8
+	.  error
+
+	conjVariables  goto 9
 
 
 state 2
-	variables : INT . conjVariables ';'  (7)
-	variables : INT . conjVariables error  (8)
+	funcion : FUNCTION . ID bloqueFuncion  (10)
 
-	ID  shift 9
+	ID  shift 10
 	.  error
-
-	conjVariables  goto 10
 
 
 state 3
-	funcion : FUNCTION . ID bloqueFuncion  (11)
-
-	ID  shift 11
-	.  error
-
-
-state 4
 	$accept : programa . $end  (0)
 
 	$end  accept
 
 
-state 5
+state 4
 	programa : declaraciones . sentencias  (1)
 	declaraciones : declaraciones . declaracion  (2)
 
-	error  shift 12
-	ID  shift 13
-	INT  shift 2
-	IF  shift 14
-	LOOP  shift 15
-	PRINT  shift 16
-	FUNCTION  shift 3
-	';'  shift 17
-	'='  shift 18
+	error  shift 11
+	ID  shift 12
+	INT  shift 1
+	IF  shift 13
+	LOOP  shift 14
+	PRINT  shift 15
+	FUNCTION  shift 2
+	';'  shift 16
+	'='  shift 17
 	.  error
 
-	sentencias  goto 19
-	declaracion  goto 20
-	variables  goto 7
-	funcion  goto 8
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 23
-	seleccion  goto 24
-	iteracion  goto 25
+	sentencias  goto 18
+	declaracion  goto 19
+	variables  goto 6
+	funcion  goto 7
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 22
+	seleccion  goto 23
+	iteracion  goto 24
 
 
-state 6
+state 5
 	declaraciones : declaracion .  (3)
 
 	.  reduce 3
 
 
+state 6
+	declaracion : variables .  (4)
+
+	.  reduce 4
+
+
 state 7
-	declaracion : variables .  (5)
+	declaracion : funcion .  (5)
 
 	.  reduce 5
 
 
 state 8
-	declaracion : funcion .  (6)
+	conjVariables : ID .  (9)
 
-	.  reduce 6
+	.  reduce 9
 
 
 state 9
-	conjVariables : ID .  (10)
+	variables : INT conjVariables . ';'  (6)
+	variables : INT conjVariables . error  (7)
+	conjVariables : conjVariables . ',' ID  (8)
 
-	.  reduce 10
+	error  shift 25
+	';'  shift 26
+	','  shift 27
+	.  error
 
 
 state 10
-	variables : INT conjVariables . ';'  (7)
-	variables : INT conjVariables . error  (8)
-	conjVariables : conjVariables . ',' ID  (9)
+	funcion : FUNCTION ID . bloqueFuncion  (10)
 
-	error  shift 26
-	';'  shift 27
-	','  shift 28
+	BEGIN  shift 28
 	.  error
+
+	bloqueFuncion  goto 29
 
 
 state 11
-	funcion : FUNCTION ID . bloqueFuncion  (11)
+	sentencia : error .  (40)
 
-	BEGIN  shift 29
-	.  error
-
-	bloqueFuncion  goto 30
+	.  reduce 40
 
 
 state 12
-	sentencia : error .  (41)
+	asignacion : ID . '=' exprAritmetica  (41)
+	asignacion : ID . '=' error  (43)
+	asignacion : ID . exprAritmetica  (44)
 
-	.  reduce 41
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'='  shift 36
+	.  error
+
+	exprAritmetica  goto 37
+	termino  goto 38
+	factor  goto 39
 
 
 state 13
-	asignacion : ID . '=' exprAritmetica  (42)
-	asignacion : ID . '=' error  (44)
-	asignacion : ID . exprAritmetica  (45)
+	seleccion : IF . condicion THEN sentenciaSeleccion  (70)
+	seleccion : IF . condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  (71)
+	seleccion : IF . condicion error  (72)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'='  shift 37
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
 	.  error
 
-	exprAritmetica  goto 38
-	termino  goto 39
-	factor  goto 40
+	exprAritmetica  goto 41
+	condicion  goto 42
+	termino  goto 38
+	factor  goto 39
 
 
 state 14
-	seleccion : IF . condicion THEN sentenciaSeleccion  (71)
-	seleccion : IF . condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  (72)
-	seleccion : IF . condicion sentenciaSeleccion  (73)
+	iteracion : LOOP . sentencias UNTIL condicion  (86)
+	iteracion : LOOP . UNTIL condicion  (87)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	LOOP  shift 14
+	UNTIL  shift 43
+	PRINT  shift 15
+	';'  shift 16
+	'='  shift 17
 	.  error
 
-	exprAritmetica  goto 42
-	condicion  goto 43
-	termino  goto 39
-	factor  goto 40
+	sentencias  goto 44
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 22
+	seleccion  goto 23
+	iteracion  goto 24
 
 
 state 15
-	iteracion : LOOP . sentencias UNTIL condicion  (87)
-	iteracion : LOOP . UNTIL condicion  (88)
+	impresion : PRINT . '(' STRING ')' ';'  (61)
+	impresion : PRINT . '(' STRING ')' error  (62)
+	impresion : PRINT . '(' STRING  (63)
+	impresion : PRINT . STRING ')'  (64)
+	impresion : PRINT . '(' ')'  (65)
+	impresion : PRINT . STRING  (66)
+	impresion : PRINT . '('  (67)
+	impresion : PRINT . ')'  (68)
+	impresion : PRINT .  (69)
 
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	LOOP  shift 15
-	UNTIL  shift 44
-	PRINT  shift 16
-	';'  shift 17
-	'='  shift 18
-	.  error
-
-	sentencias  goto 45
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 23
-	seleccion  goto 24
-	iteracion  goto 25
+	STRING  shift 45
+	'('  shift 46
+	')'  shift 47
+	$end  reduce 69
+	error  reduce 69
+	ID  reduce 69
+	IF  reduce 69
+	ELSE  reduce 69
+	END  reduce 69
+	LOOP  reduce 69
+	UNTIL  reduce 69
+	PRINT  reduce 69
+	RETURN  reduce 69
+	'='  reduce 69
 
 
 state 16
-	impresion : PRINT . '(' STRING ')' ';'  (62)
-	impresion : PRINT . '(' STRING ')' error  (63)
-	impresion : PRINT . '(' STRING  (64)
-	impresion : PRINT . STRING ')'  (65)
-	impresion : PRINT . '(' ')'  (66)
-	impresion : PRINT . STRING  (67)
-	impresion : PRINT . '('  (68)
-	impresion : PRINT . ')'  (69)
-	impresion : PRINT .  (70)
+	sentencias : ';' .  (35)
 
-	STRING  shift 46
-	'('  shift 47
-	')'  shift 48
-	$end  reduce 70
-	error  reduce 70
-	ID  reduce 70
-	IF  reduce 70
-	ELSE  reduce 70
-	END  reduce 70
-	LOOP  reduce 70
-	UNTIL  reduce 70
-	PRINT  reduce 70
-	RETURN  reduce 70
-	'='  reduce 70
+	.  reduce 35
 
 
 state 17
-	sentencias : ';' .  (36)
+	asignacion : '=' . exprAritmetica  (42)
 
-	.  reduce 36
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	.  error
+
+	exprAritmetica  goto 48
+	termino  goto 38
+	factor  goto 39
 
 
 state 18
-	asignacion : '=' . exprAritmetica  (43)
+	programa : declaraciones sentencias .  (1)
+	sentencias : sentencias . sentencia  (33)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	.  error
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	LOOP  shift 14
+	PRINT  shift 15
+	'='  shift 17
+	$end  reduce 1
 
-	exprAritmetica  goto 49
-	termino  goto 39
-	factor  goto 40
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 49
+	seleccion  goto 23
+	iteracion  goto 24
 
 
 state 19
-	programa : declaraciones sentencias .  (1)
-	sentencias : sentencias . sentencia  (34)
-
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	LOOP  shift 15
-	PRINT  shift 16
-	'='  shift 18
-	$end  reduce 1
-
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 50
-	seleccion  goto 24
-	iteracion  goto 25
-
-
-state 20
 	declaraciones : declaraciones declaracion .  (2)
 
 	.  reduce 2
 
 
-state 21
-	sentencia : asignacion . ';'  (37)
+state 20
+	sentencia : asignacion . ';'  (36)
 
-	';'  shift 51
+	';'  shift 50
 	.  error
 
 
+state 21
+	sentencia : impresion .  (37)
+
+	.  reduce 37
+
+
 state 22
-	sentencia : impresion .  (38)
+	sentencias : sentencia .  (34)
+
+	.  reduce 34
+
+
+state 23
+	sentencia : seleccion .  (38)
 
 	.  reduce 38
 
 
-state 23
-	sentencias : sentencia .  (35)
-
-	.  reduce 35
-
-
 state 24
-	sentencia : seleccion .  (39)
+	sentencia : iteracion .  (39)
 
 	.  reduce 39
 
 
 state 25
-	sentencia : iteracion .  (40)
-
-	.  reduce 40
-
-
-state 26
-	variables : INT conjVariables error .  (8)
-
-	.  reduce 8
-
-
-state 27
-	variables : INT conjVariables ';' .  (7)
+	variables : INT conjVariables error .  (7)
 
 	.  reduce 7
 
 
-state 28
-	conjVariables : conjVariables ',' . ID  (9)
+state 26
+	variables : INT conjVariables ';' .  (6)
 
-	ID  shift 52
+	.  reduce 6
+
+
+state 27
+	conjVariables : conjVariables ',' . ID  (8)
+
+	ID  shift 51
 	.  error
+
+
+state 28
+	bloqueFuncion : BEGIN . declaracionFuncion sentenciasF END  (11)
+
+	INT  shift 1
+	IMPORT  shift 52
+	.  error
+
+	variables  goto 53
+	declaracionFuncion  goto 54
 
 
 state 29
-	bloqueFuncion : BEGIN . declaracionFuncion sentenciasF END  (12)
+	funcion : FUNCTION ID bloqueFuncion .  (10)
 
-	INT  shift 2
-	IMPORT  shift 53
-	.  error
-
-	variables  goto 54
-	declaracionFuncion  goto 55
+	.  reduce 10
 
 
 state 30
-	funcion : FUNCTION ID bloqueFuncion .  (11)
+	factor : ID .  (59)
 
-	.  reduce 11
+	.  reduce 59
 
 
 state 31
-	factor : ID .  (60)
+	factor : CTEINT .  (60)
 
 	.  reduce 60
 
 
 state 32
-	factor : CTEINT .  (61)
+	exprAritmetica : '+' . termino  (49)
 
-	.  reduce 61
+	ID  shift 30
+	CTEINT  shift 31
+	'*'  shift 34
+	'/'  shift 35
+	.  error
+
+	termino  goto 55
+	factor  goto 39
 
 
 state 33
-	exprAritmetica : '+' . termino  (50)
+	exprAritmetica : '-' . termino  (51)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'*'  shift 35
-	'/'  shift 36
+	ID  shift 30
+	CTEINT  shift 31
+	'*'  shift 34
+	'/'  shift 35
 	.  error
 
 	termino  goto 56
-	factor  goto 40
+	factor  goto 39
 
 
 state 34
-	exprAritmetica : '-' . termino  (52)
+	termino : '*' . factor  (56)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'*'  shift 35
-	'/'  shift 36
+	ID  shift 30
+	CTEINT  shift 31
 	.  error
 
-	termino  goto 57
-	factor  goto 40
+	factor  goto 57
 
 
 state 35
-	termino : '*' . factor  (57)
+	termino : '/' . factor  (58)
 
-	ID  shift 31
-	CTEINT  shift 32
+	ID  shift 30
+	CTEINT  shift 31
 	.  error
 
 	factor  goto 58
 
 
 state 36
-	termino : '/' . factor  (59)
+	asignacion : ID '=' . exprAritmetica  (41)
+	asignacion : ID '=' . error  (43)
 
-	ID  shift 31
-	CTEINT  shift 32
+	error  shift 59
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
 	.  error
 
-	factor  goto 59
+	exprAritmetica  goto 60
+	termino  goto 38
+	factor  goto 39
 
 
 state 37
-	asignacion : ID '=' . exprAritmetica  (42)
-	asignacion : ID '=' . error  (44)
+	asignacion : ID exprAritmetica .  (44)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
 
-	error  shift 60
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	.  error
-
-	exprAritmetica  goto 61
-	termino  goto 39
-	factor  goto 40
+	'+'  shift 61
+	'-'  shift 62
+	';'  reduce 44
 
 
 state 38
-	asignacion : ID exprAritmetica .  (45)
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
+	exprAritmetica : termino .  (47)
+	termino : termino . '*' factor  (52)
+	termino : termino . '/' factor  (53)
+	termino : termino . '*' error  (55)
+	termino : termino . '/' error  (57)
 
-	'+'  shift 62
-	'-'  shift 63
-	';'  reduce 45
+	'*'  shift 63
+	'/'  shift 64
+	error  reduce 47
+	MENORIGUAL  reduce 47
+	MAYORIGUAL  reduce 47
+	IGUAL  reduce 47
+	DISTINTO  reduce 47
+	';'  reduce 47
+	'+'  reduce 47
+	'-'  reduce 47
+	')'  reduce 47
+	'<'  reduce 47
+	'>'  reduce 47
 
 
 state 39
-	exprAritmetica : termino .  (48)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-	termino : termino . '*' error  (56)
-	termino : termino . '/' error  (58)
+	termino : factor .  (54)
 
-	'*'  shift 64
-	'/'  shift 65
-	error  reduce 48
-	MENORIGUAL  reduce 48
-	MAYORIGUAL  reduce 48
-	IGUAL  reduce 48
-	DISTINTO  reduce 48
-	';'  reduce 48
-	'+'  reduce 48
-	'-'  reduce 48
-	')'  reduce 48
-	'<'  reduce 48
-	'>'  reduce 48
+	.  reduce 54
 
 
 state 40
-	termino : factor .  (55)
+	condicion : '(' . exprAritmetica opLogico exprAritmetica ')'  (73)
+	condicion : '(' . exprAritmetica opLogico exprAritmetica error  (75)
+	condicion : '(' . opLogico exprAritmetica ')'  (76)
+	condicion : '(' . exprAritmetica opLogico ')'  (77)
 
-	.  reduce 55
+	ID  shift 30
+	CTEINT  shift 31
+	MENORIGUAL  shift 65
+	MAYORIGUAL  shift 66
+	IGUAL  shift 67
+	DISTINTO  shift 68
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'<'  shift 69
+	'>'  shift 70
+	.  error
+
+	exprAritmetica  goto 71
+	termino  goto 38
+	factor  goto 39
+	opLogico  goto 72
 
 
 state 41
-	condicion : '(' . exprAritmetica opLogico exprAritmetica ')'  (74)
-	condicion : '(' . exprAritmetica opLogico exprAritmetica error  (76)
-	condicion : '(' . opLogico exprAritmetica ')'  (77)
-	condicion : '(' . exprAritmetica opLogico ')'  (78)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+	condicion : exprAritmetica . opLogico exprAritmetica ')'  (74)
 
-	ID  shift 31
-	CTEINT  shift 32
-	MENORIGUAL  shift 66
-	MAYORIGUAL  shift 67
-	IGUAL  shift 68
-	DISTINTO  shift 69
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'<'  shift 70
-	'>'  shift 71
+	MENORIGUAL  shift 65
+	MAYORIGUAL  shift 66
+	IGUAL  shift 67
+	DISTINTO  shift 68
+	'+'  shift 61
+	'-'  shift 62
+	'<'  shift 69
+	'>'  shift 70
 	.  error
 
-	exprAritmetica  goto 72
-	termino  goto 39
-	factor  goto 40
 	opLogico  goto 73
 
 
 state 42
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-	condicion : exprAritmetica . opLogico exprAritmetica ')'  (75)
+	seleccion : IF condicion . THEN sentenciaSeleccion  (70)
+	seleccion : IF condicion . THEN sentenciaSeleccion ELSE sentenciaSeleccion  (71)
+	seleccion : IF condicion . error  (72)
 
-	MENORIGUAL  shift 66
-	MAYORIGUAL  shift 67
-	IGUAL  shift 68
-	DISTINTO  shift 69
-	'+'  shift 62
-	'-'  shift 63
-	'<'  shift 70
-	'>'  shift 71
+	error  shift 74
+	THEN  shift 75
 	.  error
-
-	opLogico  goto 74
 
 
 state 43
-	seleccion : IF condicion . THEN sentenciaSeleccion  (71)
-	seleccion : IF condicion . THEN sentenciaSeleccion ELSE sentenciaSeleccion  (72)
-	seleccion : IF condicion . sentenciaSeleccion  (73)
+	iteracion : LOOP UNTIL . condicion  (87)
 
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	THEN  shift 75
-	BEGIN  shift 76
-	LOOP  shift 15
-	PRINT  shift 16
-	'='  shift 18
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
 	.  error
 
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 77
-	seleccion  goto 24
-	iteracion  goto 25
-	sentenciaSeleccion  goto 78
+	exprAritmetica  goto 41
+	condicion  goto 76
+	termino  goto 38
+	factor  goto 39
 
 
 state 44
-	iteracion : LOOP UNTIL . condicion  (88)
+	sentencias : sentencias . sentencia  (33)
+	iteracion : LOOP sentencias . UNTIL condicion  (86)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	LOOP  shift 14
+	UNTIL  shift 77
+	PRINT  shift 15
+	'='  shift 17
 	.  error
 
-	exprAritmetica  goto 42
-	condicion  goto 79
-	termino  goto 39
-	factor  goto 40
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 49
+	seleccion  goto 23
+	iteracion  goto 24
 
 
 state 45
-	sentencias : sentencias . sentencia  (34)
-	iteracion : LOOP sentencias . UNTIL condicion  (87)
+	impresion : PRINT STRING . ')'  (64)
+	impresion : PRINT STRING .  (66)
 
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	LOOP  shift 15
-	UNTIL  shift 80
-	PRINT  shift 16
-	'='  shift 18
-	.  error
-
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 50
-	seleccion  goto 24
-	iteracion  goto 25
+	')'  shift 78
+	$end  reduce 66
+	error  reduce 66
+	ID  reduce 66
+	IF  reduce 66
+	ELSE  reduce 66
+	END  reduce 66
+	LOOP  reduce 66
+	UNTIL  reduce 66
+	PRINT  reduce 66
+	RETURN  reduce 66
+	'='  reduce 66
 
 
 state 46
-	impresion : PRINT STRING . ')'  (65)
-	impresion : PRINT STRING .  (67)
+	impresion : PRINT '(' . STRING ')' ';'  (61)
+	impresion : PRINT '(' . STRING ')' error  (62)
+	impresion : PRINT '(' . STRING  (63)
+	impresion : PRINT '(' . ')'  (65)
+	impresion : PRINT '(' .  (67)
 
-	')'  shift 81
+	STRING  shift 79
+	')'  shift 80
 	$end  reduce 67
 	error  reduce 67
 	ID  reduce 67
@@ -678,568 +679,548 @@ state 46
 
 
 state 47
-	impresion : PRINT '(' . STRING ')' ';'  (62)
-	impresion : PRINT '(' . STRING ')' error  (63)
-	impresion : PRINT '(' . STRING  (64)
-	impresion : PRINT '(' . ')'  (66)
-	impresion : PRINT '(' .  (68)
+	impresion : PRINT ')' .  (68)
 
-	STRING  shift 82
-	')'  shift 83
-	$end  reduce 68
-	error  reduce 68
-	ID  reduce 68
-	IF  reduce 68
-	ELSE  reduce 68
-	END  reduce 68
-	LOOP  reduce 68
-	UNTIL  reduce 68
-	PRINT  reduce 68
-	RETURN  reduce 68
-	'='  reduce 68
+	.  reduce 68
 
 
 state 48
-	impresion : PRINT ')' .  (69)
+	asignacion : '=' exprAritmetica .  (42)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
 
-	.  reduce 69
-
-
-state 49
-	asignacion : '=' exprAritmetica .  (43)
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-
-	'+'  shift 62
-	'-'  shift 63
-	';'  reduce 43
-
-
-state 50
-	sentencias : sentencias sentencia .  (34)
-
-	.  reduce 34
-
-
-state 51
-	sentencia : asignacion ';' .  (37)
-
-	.  reduce 37
-
-
-state 52
-	conjVariables : conjVariables ',' ID .  (9)
-
-	.  reduce 9
-
-
-state 53
-	declaracionFuncion : IMPORT . conjVariables ';'  (14)
-
-	ID  shift 9
-	.  error
-
-	conjVariables  goto 84
-
-
-state 54
-	declaracionFuncion : variables .  (13)
-
-	.  reduce 13
-
-
-state 55
-	bloqueFuncion : BEGIN declaracionFuncion . sentenciasF END  (12)
-
-	ID  shift 13
-	IF  shift 85
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	';'  shift 88
-	'='  shift 18
-	.  error
-
-	sentenciasF  goto 89
-	sentenciaF  goto 90
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-
-
-state 56
-	exprAritmetica : '+' termino .  (50)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-	termino : termino . '*' error  (56)
-	termino : termino . '/' error  (58)
-
-	'*'  shift 64
-	'/'  shift 65
-	error  reduce 50
-	MENORIGUAL  reduce 50
-	MAYORIGUAL  reduce 50
-	IGUAL  reduce 50
-	DISTINTO  reduce 50
-	';'  reduce 50
-	'+'  reduce 50
-	'-'  reduce 50
-	')'  reduce 50
-	'<'  reduce 50
-	'>'  reduce 50
-
-
-state 57
-	exprAritmetica : '-' termino .  (52)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-	termino : termino . '*' error  (56)
-	termino : termino . '/' error  (58)
-
-	'*'  shift 64
-	'/'  shift 65
-	error  reduce 52
-	MENORIGUAL  reduce 52
-	MAYORIGUAL  reduce 52
-	IGUAL  reduce 52
-	DISTINTO  reduce 52
-	';'  reduce 52
-	'+'  reduce 52
-	'-'  reduce 52
-	')'  reduce 52
-	'<'  reduce 52
-	'>'  reduce 52
-
-
-state 58
-	termino : '*' factor .  (57)
-
-	.  reduce 57
-
-
-state 59
-	termino : '/' factor .  (59)
-
-	.  reduce 59
-
-
-state 60
-	asignacion : ID '=' error .  (44)
-
-	.  reduce 44
-
-
-state 61
-	asignacion : ID '=' exprAritmetica .  (42)
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-
-	'+'  shift 62
-	'-'  shift 63
+	'+'  shift 61
+	'-'  shift 62
 	';'  reduce 42
 
 
-state 62
-	exprAritmetica : exprAritmetica '+' . termino  (46)
-	exprAritmetica : exprAritmetica '+' . error  (49)
+state 49
+	sentencias : sentencias sentencia .  (33)
 
-	error  shift 96
-	ID  shift 31
-	CTEINT  shift 32
-	'*'  shift 35
-	'/'  shift 36
+	.  reduce 33
+
+
+state 50
+	sentencia : asignacion ';' .  (36)
+
+	.  reduce 36
+
+
+state 51
+	conjVariables : conjVariables ',' ID .  (8)
+
+	.  reduce 8
+
+
+state 52
+	declaracionFuncion : IMPORT . conjVariables ';'  (13)
+
+	ID  shift 8
 	.  error
 
-	termino  goto 97
-	factor  goto 40
+	conjVariables  goto 81
+
+
+state 53
+	declaracionFuncion : variables .  (12)
+
+	.  reduce 12
+
+
+state 54
+	bloqueFuncion : BEGIN declaracionFuncion . sentenciasF END  (11)
+
+	ID  shift 12
+	IF  shift 82
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	';'  shift 85
+	'='  shift 17
+	.  error
+
+	sentenciasF  goto 86
+	sentenciaF  goto 87
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+
+
+state 55
+	exprAritmetica : '+' termino .  (49)
+	termino : termino . '*' factor  (52)
+	termino : termino . '/' factor  (53)
+	termino : termino . '*' error  (55)
+	termino : termino . '/' error  (57)
+
+	'*'  shift 63
+	'/'  shift 64
+	error  reduce 49
+	MENORIGUAL  reduce 49
+	MAYORIGUAL  reduce 49
+	IGUAL  reduce 49
+	DISTINTO  reduce 49
+	';'  reduce 49
+	'+'  reduce 49
+	'-'  reduce 49
+	')'  reduce 49
+	'<'  reduce 49
+	'>'  reduce 49
+
+
+state 56
+	exprAritmetica : '-' termino .  (51)
+	termino : termino . '*' factor  (52)
+	termino : termino . '/' factor  (53)
+	termino : termino . '*' error  (55)
+	termino : termino . '/' error  (57)
+
+	'*'  shift 63
+	'/'  shift 64
+	error  reduce 51
+	MENORIGUAL  reduce 51
+	MAYORIGUAL  reduce 51
+	IGUAL  reduce 51
+	DISTINTO  reduce 51
+	';'  reduce 51
+	'+'  reduce 51
+	'-'  reduce 51
+	')'  reduce 51
+	'<'  reduce 51
+	'>'  reduce 51
+
+
+state 57
+	termino : '*' factor .  (56)
+
+	.  reduce 56
+
+
+state 58
+	termino : '/' factor .  (58)
+
+	.  reduce 58
+
+
+state 59
+	asignacion : ID '=' error .  (43)
+
+	.  reduce 43
+
+
+state 60
+	asignacion : ID '=' exprAritmetica .  (41)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+
+	'+'  shift 61
+	'-'  shift 62
+	';'  reduce 41
+
+
+state 61
+	exprAritmetica : exprAritmetica '+' . termino  (45)
+	exprAritmetica : exprAritmetica '+' . error  (48)
+
+	error  shift 93
+	ID  shift 30
+	CTEINT  shift 31
+	'*'  shift 34
+	'/'  shift 35
+	.  error
+
+	termino  goto 94
+	factor  goto 39
+
+
+state 62
+	exprAritmetica : exprAritmetica '-' . termino  (46)
+	exprAritmetica : exprAritmetica '-' . error  (50)
+
+	error  shift 95
+	ID  shift 30
+	CTEINT  shift 31
+	'*'  shift 34
+	'/'  shift 35
+	.  error
+
+	termino  goto 96
+	factor  goto 39
 
 
 state 63
-	exprAritmetica : exprAritmetica '-' . termino  (47)
-	exprAritmetica : exprAritmetica '-' . error  (51)
+	termino : termino '*' . factor  (52)
+	termino : termino '*' . error  (55)
 
-	error  shift 98
-	ID  shift 31
-	CTEINT  shift 32
-	'*'  shift 35
-	'/'  shift 36
+	error  shift 97
+	ID  shift 30
+	CTEINT  shift 31
 	.  error
 
-	termino  goto 99
-	factor  goto 40
+	factor  goto 98
 
 
 state 64
-	termino : termino '*' . factor  (53)
-	termino : termino '*' . error  (56)
+	termino : termino '/' . factor  (53)
+	termino : termino '/' . error  (57)
 
-	error  shift 100
-	ID  shift 31
-	CTEINT  shift 32
+	error  shift 99
+	ID  shift 30
+	CTEINT  shift 31
 	.  error
 
-	factor  goto 101
+	factor  goto 100
 
 
 state 65
-	termino : termino '/' . factor  (54)
-	termino : termino '/' . error  (58)
+	opLogico : MENORIGUAL .  (79)
 
-	error  shift 102
-	ID  shift 31
-	CTEINT  shift 32
-	.  error
-
-	factor  goto 103
+	.  reduce 79
 
 
 state 66
-	opLogico : MENORIGUAL .  (80)
+	opLogico : MAYORIGUAL .  (81)
 
-	.  reduce 80
+	.  reduce 81
 
 
 state 67
-	opLogico : MAYORIGUAL .  (82)
+	opLogico : IGUAL .  (82)
 
 	.  reduce 82
 
 
 state 68
-	opLogico : IGUAL .  (83)
+	opLogico : DISTINTO .  (83)
 
 	.  reduce 83
 
 
 state 69
-	opLogico : DISTINTO .  (84)
+	opLogico : '<' .  (78)
 
-	.  reduce 84
+	.  reduce 78
 
 
 state 70
-	opLogico : '<' .  (79)
+	opLogico : '>' .  (80)
 
-	.  reduce 79
+	.  reduce 80
 
 
 state 71
-	opLogico : '>' .  (81)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+	condicion : '(' exprAritmetica . opLogico exprAritmetica ')'  (73)
+	condicion : '(' exprAritmetica . opLogico exprAritmetica error  (75)
+	condicion : '(' exprAritmetica . opLogico ')'  (77)
 
-	.  reduce 81
+	MENORIGUAL  shift 65
+	MAYORIGUAL  shift 66
+	IGUAL  shift 67
+	DISTINTO  shift 68
+	'+'  shift 61
+	'-'  shift 62
+	'<'  shift 69
+	'>'  shift 70
+	.  error
+
+	opLogico  goto 101
 
 
 state 72
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-	condicion : '(' exprAritmetica . opLogico exprAritmetica ')'  (74)
-	condicion : '(' exprAritmetica . opLogico exprAritmetica error  (76)
-	condicion : '(' exprAritmetica . opLogico ')'  (78)
+	condicion : '(' opLogico . exprAritmetica ')'  (76)
 
-	MENORIGUAL  shift 66
-	MAYORIGUAL  shift 67
-	IGUAL  shift 68
-	DISTINTO  shift 69
-	'+'  shift 62
-	'-'  shift 63
-	'<'  shift 70
-	'>'  shift 71
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
 	.  error
 
-	opLogico  goto 104
+	exprAritmetica  goto 102
+	termino  goto 38
+	factor  goto 39
 
 
 state 73
-	condicion : '(' opLogico . exprAritmetica ')'  (77)
+	condicion : exprAritmetica opLogico . exprAritmetica ')'  (74)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
 	.  error
 
-	exprAritmetica  goto 105
-	termino  goto 39
-	factor  goto 40
+	exprAritmetica  goto 103
+	termino  goto 38
+	factor  goto 39
 
 
 state 74
-	condicion : exprAritmetica opLogico . exprAritmetica ')'  (75)
+	seleccion : IF condicion error .  (72)
 
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	.  error
-
-	exprAritmetica  goto 106
-	termino  goto 39
-	factor  goto 40
+	.  reduce 72
 
 
 state 75
-	seleccion : IF condicion THEN . sentenciaSeleccion  (71)
-	seleccion : IF condicion THEN . sentenciaSeleccion ELSE sentenciaSeleccion  (72)
+	seleccion : IF condicion THEN . sentenciaSeleccion  (70)
+	seleccion : IF condicion THEN . sentenciaSeleccion ELSE sentenciaSeleccion  (71)
 
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	BEGIN  shift 76
-	LOOP  shift 15
-	PRINT  shift 16
-	'='  shift 18
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	BEGIN  shift 104
+	LOOP  shift 14
+	PRINT  shift 15
+	'='  shift 17
 	.  error
 
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 77
-	seleccion  goto 24
-	iteracion  goto 25
-	sentenciaSeleccion  goto 107
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 105
+	seleccion  goto 23
+	iteracion  goto 24
+	sentenciaSeleccion  goto 106
 
 
 state 76
-	sentenciaSeleccion : BEGIN . sentencias END  (85)
+	iteracion : LOOP UNTIL condicion .  (87)
 
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	LOOP  shift 15
-	PRINT  shift 16
-	';'  shift 17
-	'='  shift 18
-	.  error
-
-	sentencias  goto 108
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 23
-	seleccion  goto 24
-	iteracion  goto 25
+	.  reduce 87
 
 
 state 77
-	sentenciaSeleccion : sentencia .  (86)
+	iteracion : LOOP sentencias UNTIL . condicion  (86)
 
-	.  reduce 86
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
+	.  error
+
+	exprAritmetica  goto 41
+	condicion  goto 107
+	termino  goto 38
+	factor  goto 39
 
 
 state 78
-	seleccion : IF condicion sentenciaSeleccion .  (73)
+	impresion : PRINT STRING ')' .  (64)
 
-	.  reduce 73
+	.  reduce 64
 
 
 state 79
-	iteracion : LOOP UNTIL condicion .  (88)
+	impresion : PRINT '(' STRING . ')' ';'  (61)
+	impresion : PRINT '(' STRING . ')' error  (62)
+	impresion : PRINT '(' STRING .  (63)
 
-	.  reduce 88
+	')'  shift 108
+	$end  reduce 63
+	error  reduce 63
+	ID  reduce 63
+	IF  reduce 63
+	ELSE  reduce 63
+	END  reduce 63
+	LOOP  reduce 63
+	UNTIL  reduce 63
+	PRINT  reduce 63
+	RETURN  reduce 63
+	'='  reduce 63
 
 
 state 80
-	iteracion : LOOP sentencias UNTIL . condicion  (87)
-
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
-	.  error
-
-	exprAritmetica  goto 42
-	condicion  goto 109
-	termino  goto 39
-	factor  goto 40
-
-
-state 81
-	impresion : PRINT STRING ')' .  (65)
+	impresion : PRINT '(' ')' .  (65)
 
 	.  reduce 65
 
 
-state 82
-	impresion : PRINT '(' STRING . ')' ';'  (62)
-	impresion : PRINT '(' STRING . ')' error  (63)
-	impresion : PRINT '(' STRING .  (64)
+state 81
+	conjVariables : conjVariables . ',' ID  (8)
+	declaracionFuncion : IMPORT conjVariables . ';'  (13)
 
-	')'  shift 110
-	$end  reduce 64
-	error  reduce 64
-	ID  reduce 64
-	IF  reduce 64
-	ELSE  reduce 64
-	END  reduce 64
-	LOOP  reduce 64
-	UNTIL  reduce 64
-	PRINT  reduce 64
-	RETURN  reduce 64
-	'='  reduce 64
+	';'  shift 109
+	','  shift 27
+	.  error
+
+
+state 82
+	seleccionF : IF . condicion THEN sentenciaSeleccionF  (26)
+	seleccionF : IF . condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF  (27)
+	seleccionF : IF . condicion sentenciaSeleccionF  (28)
+
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
+	.  error
+
+	exprAritmetica  goto 41
+	condicion  goto 110
+	termino  goto 38
+	factor  goto 39
 
 
 state 83
-	impresion : PRINT '(' ')' .  (66)
+	iteracionF : LOOP . sentenciasF UNTIL condicion  (31)
+	iteracionF : LOOP . UNTIL condicion  (32)
 
-	.  reduce 66
+	ID  shift 12
+	IF  shift 82
+	LOOP  shift 83
+	UNTIL  shift 111
+	PRINT  shift 15
+	RETURN  shift 84
+	';'  shift 85
+	'='  shift 17
+	.  error
+
+	sentenciasF  goto 112
+	sentenciaF  goto 87
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
 
 
 state 84
-	conjVariables : conjVariables . ',' ID  (9)
-	declaracionFuncion : IMPORT conjVariables . ';'  (14)
+	returnF : RETURN . '(' exprAritmetica ')'  (22)
+	returnF : RETURN . error  (23)
+	returnF : RETURN . '(' error  (24)
+	returnF : RETURN . '(' exprAritmetica error  (25)
 
-	';'  shift 111
-	','  shift 28
+	error  shift 113
+	'('  shift 114
 	.  error
 
 
 state 85
-	seleccionF : IF . condicion THEN sentenciaSeleccionF  (27)
-	seleccionF : IF . condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF  (28)
-	seleccionF : IF . condicion sentenciaSeleccionF  (29)
-
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
-	.  error
-
-	exprAritmetica  goto 42
-	condicion  goto 112
-	termino  goto 39
-	factor  goto 40
-
-
-state 86
-	iteracionF : LOOP . sentenciasF UNTIL condicion  (32)
-	iteracionF : LOOP . UNTIL condicion  (33)
-
-	ID  shift 13
-	IF  shift 85
-	LOOP  shift 86
-	UNTIL  shift 113
-	PRINT  shift 16
-	RETURN  shift 87
-	';'  shift 88
-	'='  shift 18
-	.  error
-
-	sentenciasF  goto 114
-	sentenciaF  goto 90
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-
-
-state 87
-	returnF : RETURN . '(' exprAritmetica ')'  (23)
-	returnF : RETURN . error  (24)
-	returnF : RETURN . '(' error  (25)
-	returnF : RETURN . '(' exprAritmetica error  (26)
-
-	error  shift 115
-	'('  shift 116
-	.  error
-
-
-state 88
-	sentenciasF : ';' .  (17)
-
-	.  reduce 17
-
-
-state 89
-	bloqueFuncion : BEGIN declaracionFuncion sentenciasF . END  (12)
-	sentenciasF : sentenciasF . sentenciaF  (15)
-
-	ID  shift 13
-	IF  shift 85
-	END  shift 117
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
-	.  error
-
-	sentenciaF  goto 118
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-
-
-state 90
-	sentenciasF : sentenciaF .  (16)
+	sentenciasF : ';' .  (16)
 
 	.  reduce 16
 
 
-state 91
-	sentenciaF : asignacion . ';'  (18)
+state 86
+	bloqueFuncion : BEGIN declaracionFuncion sentenciasF . END  (11)
+	sentenciasF : sentenciasF . sentenciaF  (14)
 
-	';'  shift 119
+	ID  shift 12
+	IF  shift 82
+	END  shift 115
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
 	.  error
+
+	sentenciaF  goto 116
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+
+
+state 87
+	sentenciasF : sentenciaF .  (15)
+
+	.  reduce 15
+
+
+state 88
+	sentenciaF : asignacion . ';'  (17)
+
+	';'  shift 117
+	.  error
+
+
+state 89
+	sentenciaF : impresion .  (18)
+
+	.  reduce 18
+
+
+state 90
+	sentenciaF : returnF . ';'  (19)
+
+	';'  shift 118
+	.  error
+
+
+state 91
+	sentenciaF : seleccionF .  (20)
+
+	.  reduce 20
 
 
 state 92
-	sentenciaF : impresion .  (19)
-
-	.  reduce 19
-
-
-state 93
-	sentenciaF : returnF . ';'  (20)
-
-	';'  shift 120
-	.  error
-
-
-state 94
-	sentenciaF : seleccionF .  (21)
+	sentenciaF : iteracionF .  (21)
 
 	.  reduce 21
 
 
-state 95
-	sentenciaF : iteracionF .  (22)
+state 93
+	exprAritmetica : exprAritmetica '+' error .  (48)
 
-	.  reduce 22
+	.  reduce 48
+
+
+state 94
+	exprAritmetica : exprAritmetica '+' termino .  (45)
+	termino : termino . '*' factor  (52)
+	termino : termino . '/' factor  (53)
+	termino : termino . '*' error  (55)
+	termino : termino . '/' error  (57)
+
+	'*'  shift 63
+	'/'  shift 64
+	error  reduce 45
+	MENORIGUAL  reduce 45
+	MAYORIGUAL  reduce 45
+	IGUAL  reduce 45
+	DISTINTO  reduce 45
+	';'  reduce 45
+	'+'  reduce 45
+	'-'  reduce 45
+	')'  reduce 45
+	'<'  reduce 45
+	'>'  reduce 45
+
+
+state 95
+	exprAritmetica : exprAritmetica '-' error .  (50)
+
+	.  reduce 50
 
 
 state 96
-	exprAritmetica : exprAritmetica '+' error .  (49)
+	exprAritmetica : exprAritmetica '-' termino .  (46)
+	termino : termino . '*' factor  (52)
+	termino : termino . '/' factor  (53)
+	termino : termino . '*' error  (55)
+	termino : termino . '/' error  (57)
 
-	.  reduce 49
-
-
-state 97
-	exprAritmetica : exprAritmetica '+' termino .  (46)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-	termino : termino . '*' error  (56)
-	termino : termino . '/' error  (58)
-
-	'*'  shift 64
-	'/'  shift 65
+	'*'  shift 63
+	'/'  shift 64
 	error  reduce 46
 	MENORIGUAL  reduce 46
 	MAYORIGUAL  reduce 46
@@ -1253,547 +1234,545 @@ state 97
 	'>'  reduce 46
 
 
-state 98
-	exprAritmetica : exprAritmetica '-' error .  (51)
+state 97
+	termino : termino '*' error .  (55)
 
-	.  reduce 51
+	.  reduce 55
+
+
+state 98
+	termino : termino '*' factor .  (52)
+
+	.  reduce 52
 
 
 state 99
-	exprAritmetica : exprAritmetica '-' termino .  (47)
-	termino : termino . '*' factor  (53)
-	termino : termino . '/' factor  (54)
-	termino : termino . '*' error  (56)
-	termino : termino . '/' error  (58)
+	termino : termino '/' error .  (57)
 
-	'*'  shift 64
-	'/'  shift 65
-	error  reduce 47
-	MENORIGUAL  reduce 47
-	MAYORIGUAL  reduce 47
-	IGUAL  reduce 47
-	DISTINTO  reduce 47
-	';'  reduce 47
-	'+'  reduce 47
-	'-'  reduce 47
-	')'  reduce 47
-	'<'  reduce 47
-	'>'  reduce 47
+	.  reduce 57
 
 
 state 100
-	termino : termino '*' error .  (56)
-
-	.  reduce 56
-
-
-state 101
-	termino : termino '*' factor .  (53)
+	termino : termino '/' factor .  (53)
 
 	.  reduce 53
 
 
+state 101
+	condicion : '(' exprAritmetica opLogico . exprAritmetica ')'  (73)
+	condicion : '(' exprAritmetica opLogico . exprAritmetica error  (75)
+	condicion : '(' exprAritmetica opLogico . ')'  (77)
+
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	')'  shift 119
+	.  error
+
+	exprAritmetica  goto 120
+	termino  goto 38
+	factor  goto 39
+
+
 state 102
-	termino : termino '/' error .  (58)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+	condicion : '(' opLogico exprAritmetica . ')'  (76)
 
-	.  reduce 58
-
-
-state 103
-	termino : termino '/' factor .  (54)
-
-	.  reduce 54
-
-
-state 104
-	condicion : '(' exprAritmetica opLogico . exprAritmetica ')'  (74)
-	condicion : '(' exprAritmetica opLogico . exprAritmetica error  (76)
-	condicion : '(' exprAritmetica opLogico . ')'  (78)
-
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
+	'+'  shift 61
+	'-'  shift 62
 	')'  shift 121
 	.  error
 
-	exprAritmetica  goto 122
-	termino  goto 39
-	factor  goto 40
+
+state 103
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+	condicion : exprAritmetica opLogico exprAritmetica . ')'  (74)
+
+	'+'  shift 61
+	'-'  shift 62
+	')'  shift 122
+	.  error
+
+
+state 104
+	sentenciaSeleccion : BEGIN . sentencias END  (84)
+
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	LOOP  shift 14
+	PRINT  shift 15
+	';'  shift 16
+	'='  shift 17
+	.  error
+
+	sentencias  goto 123
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 22
+	seleccion  goto 23
+	iteracion  goto 24
 
 
 state 105
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-	condicion : '(' opLogico exprAritmetica . ')'  (77)
-
-	'+'  shift 62
-	'-'  shift 63
-	')'  shift 123
-	.  error
-
-
-state 106
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-	condicion : exprAritmetica opLogico exprAritmetica . ')'  (75)
-
-	'+'  shift 62
-	'-'  shift 63
-	')'  shift 124
-	.  error
-
-
-state 107
-	seleccion : IF condicion THEN sentenciaSeleccion .  (71)
-	seleccion : IF condicion THEN sentenciaSeleccion . ELSE sentenciaSeleccion  (72)
-
-	ELSE  shift 125
-	$end  reduce 71
-	error  reduce 71
-	ID  reduce 71
-	IF  reduce 71
-	END  reduce 71
-	LOOP  reduce 71
-	UNTIL  reduce 71
-	PRINT  reduce 71
-	'='  reduce 71
-
-
-state 108
-	sentencias : sentencias . sentencia  (34)
-	sentenciaSeleccion : BEGIN sentencias . END  (85)
-
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	END  shift 126
-	LOOP  shift 15
-	PRINT  shift 16
-	'='  shift 18
-	.  error
-
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 50
-	seleccion  goto 24
-	iteracion  goto 25
-
-
-state 109
-	iteracion : LOOP sentencias UNTIL condicion .  (87)
-
-	.  reduce 87
-
-
-state 110
-	impresion : PRINT '(' STRING ')' . ';'  (62)
-	impresion : PRINT '(' STRING ')' . error  (63)
-
-	error  shift 127
-	';'  shift 128
-	.  error
-
-
-state 111
-	declaracionFuncion : IMPORT conjVariables ';' .  (14)
-
-	.  reduce 14
-
-
-state 112
-	seleccionF : IF condicion . THEN sentenciaSeleccionF  (27)
-	seleccionF : IF condicion . THEN sentenciaSeleccionF ELSE sentenciaSeleccionF  (28)
-	seleccionF : IF condicion . sentenciaSeleccionF  (29)
-
-	ID  shift 13
-	IF  shift 85
-	THEN  shift 129
-	BEGIN  shift 130
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
-	.  error
-
-	sentenciaF  goto 131
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-	sentenciaSeleccionF  goto 132
-
-
-state 113
-	iteracionF : LOOP UNTIL . condicion  (33)
-
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
-	.  error
-
-	exprAritmetica  goto 42
-	condicion  goto 133
-	termino  goto 39
-	factor  goto 40
-
-
-state 114
-	sentenciasF : sentenciasF . sentenciaF  (15)
-	iteracionF : LOOP sentenciasF . UNTIL condicion  (32)
-
-	ID  shift 13
-	IF  shift 85
-	LOOP  shift 86
-	UNTIL  shift 134
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
-	.  error
-
-	sentenciaF  goto 118
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-
-
-state 115
-	returnF : RETURN error .  (24)
-
-	.  reduce 24
-
-
-state 116
-	returnF : RETURN '(' . exprAritmetica ')'  (23)
-	returnF : RETURN '(' . error  (25)
-	returnF : RETURN '(' . exprAritmetica error  (26)
-
-	error  shift 135
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	.  error
-
-	exprAritmetica  goto 136
-	termino  goto 39
-	factor  goto 40
-
-
-state 117
-	bloqueFuncion : BEGIN declaracionFuncion sentenciasF END .  (12)
-
-	.  reduce 12
-
-
-state 118
-	sentenciasF : sentenciasF sentenciaF .  (15)
-
-	.  reduce 15
-
-
-state 119
-	sentenciaF : asignacion ';' .  (18)
-
-	.  reduce 18
-
-
-state 120
-	sentenciaF : returnF ';' .  (20)
-
-	.  reduce 20
-
-
-state 121
-	condicion : '(' exprAritmetica opLogico ')' .  (78)
-
-	.  reduce 78
-
-
-state 122
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-	condicion : '(' exprAritmetica opLogico exprAritmetica . ')'  (74)
-	condicion : '(' exprAritmetica opLogico exprAritmetica . error  (76)
-
-	error  shift 137
-	'+'  shift 62
-	'-'  shift 63
-	')'  shift 138
-	.  error
-
-
-state 123
-	condicion : '(' opLogico exprAritmetica ')' .  (77)
-
-	.  reduce 77
-
-
-state 124
-	condicion : exprAritmetica opLogico exprAritmetica ')' .  (75)
-
-	.  reduce 75
-
-
-state 125
-	seleccion : IF condicion THEN sentenciaSeleccion ELSE . sentenciaSeleccion  (72)
-
-	error  shift 12
-	ID  shift 13
-	IF  shift 14
-	BEGIN  shift 76
-	LOOP  shift 15
-	PRINT  shift 16
-	'='  shift 18
-	.  error
-
-	asignacion  goto 21
-	impresion  goto 22
-	sentencia  goto 77
-	seleccion  goto 24
-	iteracion  goto 25
-	sentenciaSeleccion  goto 139
-
-
-state 126
-	sentenciaSeleccion : BEGIN sentencias END .  (85)
+	sentenciaSeleccion : sentencia .  (85)
 
 	.  reduce 85
 
 
-state 127
-	impresion : PRINT '(' STRING ')' error .  (63)
+state 106
+	seleccion : IF condicion THEN sentenciaSeleccion .  (70)
+	seleccion : IF condicion THEN sentenciaSeleccion . ELSE sentenciaSeleccion  (71)
 
-	.  reduce 63
-
-
-state 128
-	impresion : PRINT '(' STRING ')' ';' .  (62)
-
-	.  reduce 62
-
-
-state 129
-	seleccionF : IF condicion THEN . sentenciaSeleccionF  (27)
-	seleccionF : IF condicion THEN . sentenciaSeleccionF ELSE sentenciaSeleccionF  (28)
-
-	ID  shift 13
-	IF  shift 85
-	BEGIN  shift 130
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
-	.  error
-
-	sentenciaF  goto 131
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-	sentenciaSeleccionF  goto 140
+	ELSE  shift 124
+	$end  reduce 70
+	error  reduce 70
+	ID  reduce 70
+	IF  reduce 70
+	END  reduce 70
+	LOOP  reduce 70
+	UNTIL  reduce 70
+	PRINT  reduce 70
+	'='  reduce 70
 
 
-state 130
-	sentenciaSeleccionF : BEGIN . sentenciasF END  (30)
+state 107
+	iteracion : LOOP sentencias UNTIL condicion .  (86)
 
-	ID  shift 13
-	IF  shift 85
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	';'  shift 88
-	'='  shift 18
-	.  error
-
-	sentenciasF  goto 141
-	sentenciaF  goto 90
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
+	.  reduce 86
 
 
-state 131
-	sentenciaSeleccionF : sentenciaF .  (31)
+state 108
+	impresion : PRINT '(' STRING ')' . ';'  (61)
+	impresion : PRINT '(' STRING ')' . error  (62)
 
-	.  reduce 31
-
-
-state 132
-	seleccionF : IF condicion sentenciaSeleccionF .  (29)
-
-	.  reduce 29
-
-
-state 133
-	iteracionF : LOOP UNTIL condicion .  (33)
-
-	.  reduce 33
-
-
-state 134
-	iteracionF : LOOP sentenciasF UNTIL . condicion  (32)
-
-	ID  shift 31
-	CTEINT  shift 32
-	'+'  shift 33
-	'-'  shift 34
-	'*'  shift 35
-	'/'  shift 36
-	'('  shift 41
-	.  error
-
-	exprAritmetica  goto 42
-	condicion  goto 142
-	termino  goto 39
-	factor  goto 40
-
-
-state 135
-	returnF : RETURN '(' error .  (25)
-
-	.  reduce 25
-
-
-state 136
-	returnF : RETURN '(' exprAritmetica . ')'  (23)
-	returnF : RETURN '(' exprAritmetica . error  (26)
-	exprAritmetica : exprAritmetica . '+' termino  (46)
-	exprAritmetica : exprAritmetica . '-' termino  (47)
-	exprAritmetica : exprAritmetica . '+' error  (49)
-	exprAritmetica : exprAritmetica . '-' error  (51)
-
-	error  shift 143
-	'+'  shift 62
-	'-'  shift 63
-	')'  shift 144
+	error  shift 125
+	';'  shift 126
 	.  error
 
 
-state 137
-	condicion : '(' exprAritmetica opLogico exprAritmetica error .  (76)
+state 109
+	declaracionFuncion : IMPORT conjVariables ';' .  (13)
 
-	.  reduce 76
-
-
-state 138
-	condicion : '(' exprAritmetica opLogico exprAritmetica ')' .  (74)
-
-	.  reduce 74
+	.  reduce 13
 
 
-state 139
-	seleccion : IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion .  (72)
+state 110
+	seleccionF : IF condicion . THEN sentenciaSeleccionF  (26)
+	seleccionF : IF condicion . THEN sentenciaSeleccionF ELSE sentenciaSeleccionF  (27)
+	seleccionF : IF condicion . sentenciaSeleccionF  (28)
 
-	.  reduce 72
-
-
-state 140
-	seleccionF : IF condicion THEN sentenciaSeleccionF .  (27)
-	seleccionF : IF condicion THEN sentenciaSeleccionF . ELSE sentenciaSeleccionF  (28)
-
-	ELSE  shift 145
-	ID  reduce 27
-	IF  reduce 27
-	END  reduce 27
-	LOOP  reduce 27
-	UNTIL  reduce 27
-	PRINT  reduce 27
-	RETURN  reduce 27
-	'='  reduce 27
-
-
-state 141
-	sentenciasF : sentenciasF . sentenciaF  (15)
-	sentenciaSeleccionF : BEGIN sentenciasF . END  (30)
-
-	ID  shift 13
-	IF  shift 85
-	END  shift 146
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
+	ID  shift 12
+	IF  shift 82
+	THEN  shift 127
+	BEGIN  shift 128
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
 	.  error
 
-	sentenciaF  goto 118
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
+	sentenciaF  goto 129
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+	sentenciaSeleccionF  goto 130
 
 
-state 142
-	iteracionF : LOOP sentenciasF UNTIL condicion .  (32)
+state 111
+	iteracionF : LOOP UNTIL . condicion  (32)
 
-	.  reduce 32
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
+	.  error
+
+	exprAritmetica  goto 41
+	condicion  goto 131
+	termino  goto 38
+	factor  goto 39
 
 
-state 143
-	returnF : RETURN '(' exprAritmetica error .  (26)
+state 112
+	sentenciasF : sentenciasF . sentenciaF  (14)
+	iteracionF : LOOP sentenciasF . UNTIL condicion  (31)
 
-	.  reduce 26
+	ID  shift 12
+	IF  shift 82
+	LOOP  shift 83
+	UNTIL  shift 132
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
+	.  error
+
+	sentenciaF  goto 116
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
 
 
-state 144
-	returnF : RETURN '(' exprAritmetica ')' .  (23)
+state 113
+	returnF : RETURN error .  (23)
 
 	.  reduce 23
 
 
-state 145
-	seleccionF : IF condicion THEN sentenciaSeleccionF ELSE . sentenciaSeleccionF  (28)
+state 114
+	returnF : RETURN '(' . exprAritmetica ')'  (22)
+	returnF : RETURN '(' . error  (24)
+	returnF : RETURN '(' . exprAritmetica error  (25)
 
-	ID  shift 13
-	IF  shift 85
-	BEGIN  shift 130
-	LOOP  shift 86
-	PRINT  shift 16
-	RETURN  shift 87
-	'='  shift 18
+	error  shift 133
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
 	.  error
 
-	sentenciaF  goto 131
-	asignacion  goto 91
-	impresion  goto 92
-	returnF  goto 93
-	seleccionF  goto 94
-	iteracionF  goto 95
-	sentenciaSeleccionF  goto 147
+	exprAritmetica  goto 134
+	termino  goto 38
+	factor  goto 39
 
 
-state 146
-	sentenciaSeleccionF : BEGIN sentenciasF END .  (30)
+state 115
+	bloqueFuncion : BEGIN declaracionFuncion sentenciasF END .  (11)
+
+	.  reduce 11
+
+
+state 116
+	sentenciasF : sentenciasF sentenciaF .  (14)
+
+	.  reduce 14
+
+
+state 117
+	sentenciaF : asignacion ';' .  (17)
+
+	.  reduce 17
+
+
+state 118
+	sentenciaF : returnF ';' .  (19)
+
+	.  reduce 19
+
+
+state 119
+	condicion : '(' exprAritmetica opLogico ')' .  (77)
+
+	.  reduce 77
+
+
+state 120
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+	condicion : '(' exprAritmetica opLogico exprAritmetica . ')'  (73)
+	condicion : '(' exprAritmetica opLogico exprAritmetica . error  (75)
+
+	error  shift 135
+	'+'  shift 61
+	'-'  shift 62
+	')'  shift 136
+	.  error
+
+
+state 121
+	condicion : '(' opLogico exprAritmetica ')' .  (76)
+
+	.  reduce 76
+
+
+state 122
+	condicion : exprAritmetica opLogico exprAritmetica ')' .  (74)
+
+	.  reduce 74
+
+
+state 123
+	sentencias : sentencias . sentencia  (33)
+	sentenciaSeleccion : BEGIN sentencias . END  (84)
+
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	END  shift 137
+	LOOP  shift 14
+	PRINT  shift 15
+	'='  shift 17
+	.  error
+
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 49
+	seleccion  goto 23
+	iteracion  goto 24
+
+
+state 124
+	seleccion : IF condicion THEN sentenciaSeleccion ELSE . sentenciaSeleccion  (71)
+
+	error  shift 11
+	ID  shift 12
+	IF  shift 13
+	BEGIN  shift 104
+	LOOP  shift 14
+	PRINT  shift 15
+	'='  shift 17
+	.  error
+
+	asignacion  goto 20
+	impresion  goto 21
+	sentencia  goto 105
+	seleccion  goto 23
+	iteracion  goto 24
+	sentenciaSeleccion  goto 138
+
+
+state 125
+	impresion : PRINT '(' STRING ')' error .  (62)
+
+	.  reduce 62
+
+
+state 126
+	impresion : PRINT '(' STRING ')' ';' .  (61)
+
+	.  reduce 61
+
+
+state 127
+	seleccionF : IF condicion THEN . sentenciaSeleccionF  (26)
+	seleccionF : IF condicion THEN . sentenciaSeleccionF ELSE sentenciaSeleccionF  (27)
+
+	ID  shift 12
+	IF  shift 82
+	BEGIN  shift 128
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
+	.  error
+
+	sentenciaF  goto 129
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+	sentenciaSeleccionF  goto 139
+
+
+state 128
+	sentenciaSeleccionF : BEGIN . sentenciasF END  (29)
+
+	ID  shift 12
+	IF  shift 82
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	';'  shift 85
+	'='  shift 17
+	.  error
+
+	sentenciasF  goto 140
+	sentenciaF  goto 87
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+
+
+state 129
+	sentenciaSeleccionF : sentenciaF .  (30)
 
 	.  reduce 30
 
 
-state 147
-	seleccionF : IF condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF .  (28)
+state 130
+	seleccionF : IF condicion sentenciaSeleccionF .  (28)
 
 	.  reduce 28
 
 
+state 131
+	iteracionF : LOOP UNTIL condicion .  (32)
+
+	.  reduce 32
+
+
+state 132
+	iteracionF : LOOP sentenciasF UNTIL . condicion  (31)
+
+	ID  shift 30
+	CTEINT  shift 31
+	'+'  shift 32
+	'-'  shift 33
+	'*'  shift 34
+	'/'  shift 35
+	'('  shift 40
+	.  error
+
+	exprAritmetica  goto 41
+	condicion  goto 141
+	termino  goto 38
+	factor  goto 39
+
+
+state 133
+	returnF : RETURN '(' error .  (24)
+
+	.  reduce 24
+
+
+state 134
+	returnF : RETURN '(' exprAritmetica . ')'  (22)
+	returnF : RETURN '(' exprAritmetica . error  (25)
+	exprAritmetica : exprAritmetica . '+' termino  (45)
+	exprAritmetica : exprAritmetica . '-' termino  (46)
+	exprAritmetica : exprAritmetica . '+' error  (48)
+	exprAritmetica : exprAritmetica . '-' error  (50)
+
+	error  shift 142
+	'+'  shift 61
+	'-'  shift 62
+	')'  shift 143
+	.  error
+
+
+state 135
+	condicion : '(' exprAritmetica opLogico exprAritmetica error .  (75)
+
+	.  reduce 75
+
+
+state 136
+	condicion : '(' exprAritmetica opLogico exprAritmetica ')' .  (73)
+
+	.  reduce 73
+
+
+state 137
+	sentenciaSeleccion : BEGIN sentencias END .  (84)
+
+	.  reduce 84
+
+
+state 138
+	seleccion : IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion .  (71)
+
+	.  reduce 71
+
+
+state 139
+	seleccionF : IF condicion THEN sentenciaSeleccionF .  (26)
+	seleccionF : IF condicion THEN sentenciaSeleccionF . ELSE sentenciaSeleccionF  (27)
+
+	ELSE  shift 144
+	ID  reduce 26
+	IF  reduce 26
+	END  reduce 26
+	LOOP  reduce 26
+	UNTIL  reduce 26
+	PRINT  reduce 26
+	RETURN  reduce 26
+	'='  reduce 26
+
+
+state 140
+	sentenciasF : sentenciasF . sentenciaF  (14)
+	sentenciaSeleccionF : BEGIN sentenciasF . END  (29)
+
+	ID  shift 12
+	IF  shift 82
+	END  shift 145
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
+	.  error
+
+	sentenciaF  goto 116
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+
+
+state 141
+	iteracionF : LOOP sentenciasF UNTIL condicion .  (31)
+
+	.  reduce 31
+
+
+state 142
+	returnF : RETURN '(' exprAritmetica error .  (25)
+
+	.  reduce 25
+
+
+state 143
+	returnF : RETURN '(' exprAritmetica ')' .  (22)
+
+	.  reduce 22
+
+
+state 144
+	seleccionF : IF condicion THEN sentenciaSeleccionF ELSE . sentenciaSeleccionF  (27)
+
+	ID  shift 12
+	IF  shift 82
+	BEGIN  shift 128
+	LOOP  shift 83
+	PRINT  shift 15
+	RETURN  shift 84
+	'='  shift 17
+	.  error
+
+	sentenciaF  goto 129
+	asignacion  goto 88
+	impresion  goto 89
+	returnF  goto 90
+	seleccionF  goto 91
+	iteracionF  goto 92
+	sentenciaSeleccionF  goto 146
+
+
+state 145
+	sentenciaSeleccionF : BEGIN sentenciasF END .  (29)
+
+	.  reduce 29
+
+
+state 146
+	seleccionF : IF condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF .  (27)
+
+	.  reduce 27
+
+
 32 terminals, 27 nonterminals
-89 grammar rules, 148 states
+88 grammar rules, 147 states

@@ -380,9 +380,9 @@ public class UIMain extends javax.swing.JFrame {
         parser = new Parser(la,this,false);
                 
         //ejecutar el parser
-        //parser.run();
+        parser.run();
         
-        
+        /*
         //Panel de Errores
         Style errorPanel = new Style(this.jTextPane1);
         //Panel de Lexema
@@ -439,7 +439,7 @@ public class UIMain extends javax.swing.JFrame {
             System.out.println("An exception was trhown \n - Cause: " + e.getCause()
                              + "\n Message: " + e.getMessage());
         }
-        
+        */
         
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -26,7 +26,7 @@ programa:   declaraciones sentencias
 				
 declaraciones: declaraciones declaracion
 	     | declaracion
-             | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Declaracion invalida"); }
+             //| error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Declaracion invalida"); }
 	     ;
 
 declaracion: variables
@@ -101,7 +101,7 @@ sentencia: asignacion ';'
          | impresion
          | seleccion
          | iteracion
-         | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Sentencia invalida"); }
+         | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Sentencia Invalida"); }
          ;
 
 //ASIGNACION
@@ -151,7 +151,7 @@ impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).
 
 seleccion: IF condicion THEN sentenciaSeleccion                          { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF"); }
          | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }
-         | IF condicion sentenciaSeleccion   				 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
+         | IF condicion error                                            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
 
 
@@ -172,6 +172,8 @@ opLogico: '<'
 
 sentenciaSeleccion: BEGIN sentencias END
                   | sentencia
+                 // | sentencias END          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba BEGIN."); }
+                 // | BEGIN sentencias error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba END."); }
                   ;
 
 // ITERACION
@@ -192,6 +194,7 @@ private UIMain uiMain;
 private Style errorPanel;//Panel de Errores
 private Style lexPanel;  //Panel de Lexema
 private Style linePanel; //Panel para marcar errores
+private String lastError = "";
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe)
 	{
@@ -209,7 +212,6 @@ private Style linePanel; //Panel para marcar errores
 	    lexPanel = new Style(uiMain.getjTextPane3());
 	    //Panel para marcar errores
 	    linePanel = new Style(uiMain.getjTextPane2());
-
 	}
 
     private int yylex() {
@@ -226,7 +228,7 @@ private Style linePanel; //Panel para marcar errores
 
            while (la.hasMoreElements() && tk.hasError()){
                 showErrorParser("Linea " + tk.getLine() + ": Error Lexico: " + tk.getError());
-                tk = (Token)la.nextElement();
+                //tk = (Token)la.nextElement();
            }
 
            //System.out.println(tk.getType());
