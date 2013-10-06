@@ -2,10 +2,12 @@
 package com.uni.compiler.parser;
 
 import java.util.Enumeration;
+import java.util.Stack;
 
 import com.uni.compiler.UI.UIMain;
 import com.uni.compiler.UI.Style;
 import com.uni.compiler.lexicAnalizer.*;
+
 %}
 
 %token ID INT CTEINT STRING IF THEN ELSE BEGIN END IMPORT MENORIGUAL MAYORIGUAL IGUAL DISTINTO LOOP UNTIL PRINT RETURN FUNCTION
@@ -196,6 +198,8 @@ private Style errorPanel;//Panel de Errores
 private Style lexPanel;  //Panel de Lexema
 private Style linePanel; //Panel para marcar errores
 private String lastError = "";
+public Stack pilaLoop;
+public Stack pilaBegin;
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe)
 	{
@@ -213,6 +217,9 @@ private String lastError = "";
 	    lexPanel = new Style(uiMain.getjTextPane3());
 	    //Panel para marcar errores
 	    linePanel = new Style(uiMain.getjTextPane2());
+
+            this.pilaLoop = new Stack();
+            this.pilaBegin = new Stack();
 	}
 
     private int yylex() {
@@ -252,14 +259,31 @@ private String lastError = "";
                    return PRINT;
                if(tk.getToken().equalsIgnoreCase("INT"))
                    return INT;
-               if(tk.getToken().equalsIgnoreCase("LOOP"))
-                   return LOOP;
-               if(tk.getToken().equalsIgnoreCase("UNTIL"))
-                   return UNTIL;
-               if(tk.getToken().equalsIgnoreCase("BEGIN"))
-                   return BEGIN;
-               if(tk.getToken().equalsIgnoreCase("END"))
-                   return END;
+               if(tk.getToken().equalsIgnoreCase("LOOP")){
+                    this.pilaLoop.push(tk);
+                    return LOOP;
+               }
+               if(tk.getToken().equalsIgnoreCase("UNTIL")){
+                    if (!this.pilaLoop.empty()){
+                        this.pilaLoop.pop();
+                    } else {
+                        showErrorParser("Linea " + tk.getLine() + ": UNTIL sin su correspondiente LOOP");
+                    }
+                    return UNTIL;
+               }
+               if(tk.getToken().equalsIgnoreCase("BEGIN")){
+                    this.pilaBegin.push(tk);
+                    return BEGIN;
+               }
+               if(tk.getToken().equalsIgnoreCase("END")){
+                    if (!this.pilaBegin.empty()){
+                        this.pilaBegin.pop();
+                    } else {
+                        showErrorParser("Linea " + tk.getLine() + ": END sin su correspondiente BEGIN");
+
+                    }
+                    return END;
+               }
                if(tk.getToken().equalsIgnoreCase("IMPORT"))
                    return IMPORT;
                if(tk.getToken().equalsIgnoreCase("RETURN"))

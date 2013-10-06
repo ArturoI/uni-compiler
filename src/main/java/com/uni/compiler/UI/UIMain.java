@@ -372,6 +372,7 @@ public class UIMain extends javax.swing.JFrame {
         return nro;
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Style errorPanel = new Style(this.getjTextPane1());
         
         this.ButtonST.setEnabled(true);        
         
@@ -381,6 +382,18 @@ public class UIMain extends javax.swing.JFrame {
                 
         //ejecutar el parser
         parser.run();
+        
+        while (!parser.pilaBegin.isEmpty()){
+            Token t = (Token) parser.pilaBegin.pop();
+            errorPanel.setNegrita("Linea " + t.getLine() + ": BEGIN no tiene su correspondiente END.");
+            errorPanel.newLine();
+        }
+        
+        while (!parser.pilaLoop.isEmpty()){
+            Token t = (Token) parser.pilaLoop.pop();
+            errorPanel.setNegrita("Linea " + t.getLine() + ": LOOP no tiene su correspondiente UNTIL.");
+            errorPanel.newLine();
+        }
         
         /*
         //Panel de Errores
