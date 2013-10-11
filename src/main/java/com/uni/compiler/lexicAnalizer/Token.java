@@ -3,12 +3,17 @@ package com.uni.compiler.lexicAnalizer;
 public class Token {
 
 	private String type;
-	private String lexema;
+        private String variableType;
+        private String lexema;
 	private int line;
 	private String errorMessage = "";
 	private String warningMessage = "";
+        public String functionName;
+        
 
 	public Token() {
+            this.functionName = "";
+            this.variableType = "";
 	}
 
 	public void addChar(char c) {
@@ -70,5 +75,13 @@ public class Token {
         public void setLine(int line){ this.line = line; }
         
         public int getLine(){ return this.line; }
+        
+        public void setVariableType(String variableType) {
+            this.variableType = variableType;
+        }
+
+        public String getVariableType() {
+            return variableType;
+        }
 
 }

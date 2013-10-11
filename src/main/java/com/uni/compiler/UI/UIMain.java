@@ -21,8 +21,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +44,8 @@ public class UIMain extends javax.swing.JFrame {
     
     private LexicAnalizer la;
     private Parser parser;
+    
+    private List symbolsTable;
 
 	{
 	//Set Look & Feel
@@ -375,10 +379,10 @@ public class UIMain extends javax.swing.JFrame {
         Style errorPanel = new Style(this.getjTextPane1());
         
         this.ButtonST.setEnabled(true);        
-        
-        this.la = new LexicAnalizer(this.path);
+        this.symbolsTable = new ArrayList<Token>();
+        this.la = new LexicAnalizer(this.path, symbolsTable);
                 
-        parser = new Parser(la,this,false);
+        parser = new Parser(la,this,false, symbolsTable);
                 
         //ejecutar el parser
         parser.run();
@@ -491,7 +495,7 @@ public class UIMain extends javax.swing.JFrame {
         if (this.ButtonST.isSelected()){
             this.ButtonRWT.setSelected(false);
             
-            Iterator it = this.la.getSymbolsTable().iterator();
+            Iterator it = this.symbolsTable.iterator();
             while (it.hasNext()) {
                 modelo.addElement( ((String) it.next()) );
             }

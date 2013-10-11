@@ -1,8 +1,7 @@
 %{
 package com.uni.compiler.parser;
 
-import java.util.Enumeration;
-import java.util.Stack;
+import java.util.*;
 
 import com.uni.compiler.UI.UIMain;
 import com.uni.compiler.UI.Style;
@@ -35,26 +34,31 @@ declaracion: variables
 	   | funcion
            ;
 
-variables: INT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": Declaracion de variables."); }
+variables: INT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": Declaracion de variables."); 
+                                      modifyVariableNames();
+                                      saveVariableType(this.tmpId, "INT");
+                                      this.tmpId = new ArrayList<Token>();
+                                    }
+         
          | INT conjVariables error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
          ;
 
-conjVariables: conjVariables ',' ID 	
-             | ID
+conjVariables: conjVariables ',' ID { this.tmpId.add((Token)$1.obj); addFunctionNameToToken(this.functionName, ((Token)$1.obj).getToken()); }	
+             | ID                   { this.tmpId.add((Token)$1.obj); addFunctionNameToToken(this.functionName, ((Token)$1.obj).getToken()); }
 	     ;
 
-funcion: FUNCTION ID bloqueFuncion
+funcion: FUNCTION ID bloqueFuncion { this.functionName = ""; }
        ;
 
 bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion."); }
-		| BEGIN END                              { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera el cuerpo de la funcion");  }
+		
+                | BEGIN END                              { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera el cuerpo de la funcion");  }
                 | declaracionFuncion sentenciasF END     { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera BEGIN");  }
                 | BEGIN declaracionFuncion sentenciasF error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }
-                | '' { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }                                     
                 ;
 
-declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); }
-		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }
+declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); this.functionName = ((Token)$1.obj).getToken(); }
+		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); this.functionName = ((Token)$1.obj).getToken();}
 		  ;
 
 sentenciasF: sentenciasF sentenciaF
@@ -112,7 +116,8 @@ sentencia: asignacion ';'
 
 //ASIGNACION
 
-asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion."); }
+asignacion: ID '=' exprAritmetica   { /*showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");*/ }
+         
           | '=' exprAritmetica      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera Identificador antes de ="); }
           | ID '=' error            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera un valor para asignar al Identificador."); }
           | ID exprAritmetica       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
@@ -121,6 +126,7 @@ asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).
 exprAritmetica:	exprAritmetica '+' termino
               | exprAritmetica '-' termino
               | termino
+             
               | exprAritmetica '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
               | '+' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }  	
               | exprAritmetica '-' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -130,6 +136,7 @@ exprAritmetica:	exprAritmetica '+' termino
 termino: termino '*' factor 
        | termino '/' factor 
        | factor
+       
        | termino '*' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
        | '*' factor          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 	
        | termino '/' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -143,6 +150,7 @@ factor: ID
 //IMPRESION
 
 impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");  }
+         
          | PRINT '(' STRING ')' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
          | PRINT '(' STRING error       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
          | PRINT STRING ')'             { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('"); }
@@ -157,10 +165,12 @@ impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).
 
 seleccion: IF condicion THEN sentenciaSeleccion                          { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF"); }
          | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }
+         
          | IF condicion error                                            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
 
 condicion: '(' exprAritmetica opLogico exprAritmetica ')'
+         
          | exprAritmetica opLogico exprAritmetica ')'            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
          | '(' exprAritmetica opLogico exprAritmetica error      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
          | '(' opLogico exprAritmetica ')'                       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
@@ -198,10 +208,17 @@ private Style errorPanel;//Panel de Errores
 private Style lexPanel;  //Panel de Lexema
 private Style linePanel; //Panel para marcar errores
 private String lastError = "";
+
 public Stack pilaLoop;
 public Stack pilaBegin;
 
- public Parser(LexicAnalizer la, UIMain v, boolean debugMe)
+private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multiples
+
+private List<Token> symbolsTable;
+
+private String functionName;
+
+ public Parser(LexicAnalizer la, UIMain v, boolean debugMe, List<Token> st)
 	{
 	    this.la = la;
 
@@ -220,6 +237,11 @@ public Stack pilaBegin;
 
             this.pilaLoop = new Stack();
             this.pilaBegin = new Stack();
+
+            this.functionName = "";
+            this.tmpId = new ArrayList<Token>();
+
+            this.symbolsTable = st;
 	}
 
     private int yylex() {
@@ -236,7 +258,7 @@ public Stack pilaBegin;
 
            while (la.hasMoreElements() && tk.hasError()){
                 showErrorParser("Linea " + tk.getLine() + ": Error Lexico: " + tk.getError());
-                //tk = (Token)la.nextElement();
+                tk = (Token)la.nextElement();
            }
 
            //System.out.println(tk.getType());
@@ -353,3 +375,45 @@ public Stack pilaBegin;
         errorPanel.setNegrita(s);
         errorPanel.newLine();	
     }
+
+    private void modifyVariableNames(){
+        if (!this.functionName.equals("")){
+          for (Token t : this.tmpId){
+            t.setLexema(this.functionName + "&" + t.getToken());
+          }
+        }
+    }
+
+    private Token getTokenFromSymbolTable(String tokenId){
+            for (Token t : this.symbolsTable){
+                if (t.getToken().equals(tokenId)){
+                    return t;
+                }
+            }
+            return null;
+        }
+        
+    private void saveVariableType(List<Token> l, String tipo){
+        
+        for (Token t: l){
+            if (t.getType().equals("Identificador")){
+                Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
+                if (tokenInSymbolTable.getVariableType().equals("")){
+                    t.setVariableType(tipo);
+                }else{
+                    showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
+                }
+            }
+        }   
+    }
+
+    private void addFunctionNameToToken(String functionName, String variable){
+            if (!functionName.equals("")){
+                for (Token t : this.symbolsTable){
+                    if (t.getToken().equals(variable)){
+                        t.setLexema(functionName + "&" + variable);
+                        t.functionName = functionName;
+                    }
+                }
+            }
+        }

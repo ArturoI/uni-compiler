@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LexicAnalizer implements Enumeration {
 	private FileManager source;
-	private List<String> symbolsTable = new ArrayList<String>();
+	private List<Token> symbolsTable;
 	private AnalizerFactory analizerFactory;
 	public int line = 1;
 	private Token nextToken = null;
@@ -28,10 +29,11 @@ public class LexicAnalizer implements Enumeration {
                 nextToken.setTokenType("");
 	}
 
-	public LexicAnalizer(String path) {
+	public LexicAnalizer(String path, List<Token> st) {
 		source = new FileManager(path);
                 this.analizerFactory = new AnalizerFactory(this);
                 this.reservedWords = this.analizerFactory.createReservedWords();
+                this.symbolsTable = st;
 	}
 
 	public void saveCharacter(Character c) {
@@ -135,7 +137,7 @@ public class LexicAnalizer implements Enumeration {
                     && !symbolsTable.contains(t.getToken())
                    ) {
 
-			symbolsTable.add(t.getToken());
+			symbolsTable.add(t);
 			//System.out.println("[V] Token added line: " + line + " TokenType: "
 			//		+ t.getType() + " Token: " + t.getToken());
 		} else {
@@ -212,7 +214,7 @@ public class LexicAnalizer implements Enumeration {
             return this.reservedWords;
         }
         
-        public List<String> getSymbolsTable (){
+        public List<Token> getSymbolsTable (){
             return this.symbolsTable;
         }
         

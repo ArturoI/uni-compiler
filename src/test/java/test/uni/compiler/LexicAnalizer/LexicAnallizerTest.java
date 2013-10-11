@@ -13,7 +13,7 @@ public class LexicAnallizerTest {
 //	@Test
 	public void test() throws IOException {
 		analizer = new LexicAnalizer(
-				"/Users/emn/workspace/uni-compiler/testFiles/FirstTest.txt");
+				"/Users/emn/workspace/uni-compiler/testFiles/FirstTest.txt", null);
 		Token lastToken;
 		try {
 			while ((lastToken = analizer.getToken()) != null) {
