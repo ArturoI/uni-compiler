@@ -10,10 +10,12 @@ public class FileManager {
 	private BufferedReader source;
         private int lineNumber = 1;
         private boolean hasMore = true;
+        private boolean hasLastChar = true;
         
 	public FileManager(String path) {
             try {
                 hasMore = true;
+                hasLastChar = true;
                 source = new BufferedReader(new InputStreamReader(
                                 new FileInputStream(path)));                
             } catch (IOException e) {
@@ -32,7 +34,10 @@ public class FileManager {
                 }
                 return c;
             }
-            source.close();
+            if (hasLastChar){
+                hasLastChar = false;
+                return '\n';
+            }
             hasMore = false;
             return null;
 	}
@@ -44,6 +49,8 @@ public class FileManager {
 	public void write() {
 
 	}
+        
+        public void close() throws IOException{ source.close(); }
 
 	public void open(String filePath) {
 

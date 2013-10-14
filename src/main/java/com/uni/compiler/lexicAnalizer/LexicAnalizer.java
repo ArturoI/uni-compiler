@@ -16,6 +16,7 @@ public class LexicAnalizer implements Enumeration {
 	public int line = 1;
 	private Token nextToken = null;
 	private Character oldChracter = null;
+        
 
 	private HashMap<String, String> reservedWords;
 
@@ -125,14 +126,15 @@ public class LexicAnalizer implements Enumeration {
                 Token last = new Token();
                 last.setLexema("FIN DEL ARCHIVO");
                 last.setTokenType("EOF");
+                this.source.close();
                 return last;
             }
 	}
 
 	public void addToSymbolsTable(Token t) {
+            //Si el tipo es identificador se agrega en el parser - por el nombre de la funcion appendeado.
 		if (!t.hasError()
-                    && ( t.getType().equals("Identificador")
-                         || t.getType().equals("Constante") || (t.getType().equals("Cadena")))
+                    && (t.getType().equals("Constante") || (t.getType().equals("Cadena")))
                     && !reservedWords.containsKey(t.getToken())
                     && !symbolsTable.contains(t.getToken())
                    ) {

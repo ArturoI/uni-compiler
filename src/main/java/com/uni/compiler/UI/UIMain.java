@@ -369,20 +369,27 @@ public class UIMain extends javax.swing.JFrame {
         this.jButton1.setEnabled(true);
         setTitle("Compiladores 2013 - " + path);
         jFrame1.hide();
-       
     }//GEN-LAST:event_jMenuItem1ActionPerformed
     private int searchLine(JTextPane panel, int nro){
         //busco numero de linea para posicionar el cursor
         return nro;
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Style errorPanel = new Style(this.getjTextPane1());
+        
         
         this.ButtonST.setEnabled(true);        
         this.symbolsTable = new ArrayList<Token>();
         this.la = new LexicAnalizer(this.path, symbolsTable);
-                
-        parser = new Parser(la,this,false, symbolsTable);
+        this.parser = new Parser(la,this,false, symbolsTable);
+        
+        runParser();
+        
+        //runLexic();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void runParser(){
+        Style errorPanel = new Style(this.getjTextPane1());
+        
                 
         //ejecutar el parser
         parser.run();
@@ -398,8 +405,10 @@ public class UIMain extends javax.swing.JFrame {
             errorPanel.setNegrita("Linea " + t.getLine() + ": LOOP no tiene su correspondiente UNTIL.");
             errorPanel.newLine();
         }
-        
-        /*
+    }
+    
+    private void runLexic(){
+   
         //Panel de Errores
         Style errorPanel = new Style(this.jTextPane1);
         //Panel de Lexema
@@ -456,10 +465,10 @@ public class UIMain extends javax.swing.JFrame {
             System.out.println("An exception was trhown \n - Cause: " + e.getCause()
                              + "\n Message: " + e.getMessage());
         }
-        */
         
-    }//GEN-LAST:event_jButton1ActionPerformed
-
+        
+    }
+    
     private void ButtonRWTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRWTActionPerformed
 
         DefaultListModel modelo = new DefaultListModel();
@@ -497,7 +506,7 @@ public class UIMain extends javax.swing.JFrame {
             
             Iterator it = this.symbolsTable.iterator();
             while (it.hasNext()) {
-                modelo.addElement( ((String) it.next()) );
+                modelo.addElement( (((Token) it.next()).getToken()) );
             }
             List.setModel(modelo);
             List.setVisible(true);

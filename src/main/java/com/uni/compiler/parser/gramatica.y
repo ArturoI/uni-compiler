@@ -35,30 +35,30 @@ declaracion: variables
            ;
 
 variables: INT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": Declaracion de variables."); 
-                                      modifyVariableNames();
-                                      saveVariableType(this.tmpId, "INT");
+                                      saveVariableType("INT");
+                                      addTmpIdToSymbolsTable();
                                       this.tmpId = new ArrayList<Token>();
                                     }
          
-         | INT conjVariables error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
+         | INT conjVariables error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": Error Sintactico : Se esperaba ';'");  }
          ;
 
-conjVariables: conjVariables ',' ID { this.tmpId.add((Token)$1.obj); addFunctionNameToToken(this.functionName, ((Token)$1.obj).getToken()); }	
-             | ID                   { this.tmpId.add((Token)$1.obj); addFunctionNameToToken(this.functionName, ((Token)$1.obj).getToken()); }
+conjVariables: conjVariables ',' ID { addFunctionNameToToken(this.functionName, ((Token)$3.obj)); this.tmpId.add((Token)$3.obj);  }	
+             | ID                   { addFunctionNameToToken(this.functionName, ((Token)$1.obj)); this.tmpId.add((Token)$1.obj);  }
 	     ;
 
-funcion: FUNCTION ID bloqueFuncion { this.functionName = ""; }
+funcion: FUNCTION ID bloqueFuncion { }
        ;
 
-bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion."); }
+bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion."); this.functionName = ""; }
 		
                 | BEGIN END                              { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera el cuerpo de la funcion");  }
                 | declaracionFuncion sentenciasF END     { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera BEGIN");  }
                 | BEGIN declaracionFuncion sentenciasF error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }
                 ;
 
-declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); this.functionName = ((Token)$1.obj).getToken(); }
-		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); this.functionName = ((Token)$1.obj).getToken();}
+declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); }//this.functionName = ((Token)$0.obj).getToken(); }
+		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }//this.functionName = ((Token)$0.obj).getToken();}
 		  ;
 
 sentenciasF: sentenciasF sentenciaF
@@ -111,7 +111,7 @@ sentencia: asignacion ';'
          | impresion
          | seleccion
          | iteracion
-         | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Sentencia Invalida"); }
+         | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": Error Sintactico : Sentencia Invalida"); }
          ;
 
 //ASIGNACION
@@ -123,7 +123,7 @@ asignacion: ID '=' exprAritmetica   { /*showInfoParser("Linea " + ((Token)$1.obj
           | ID exprAritmetica       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
           ;
 
-exprAritmetica:	exprAritmetica '+' termino
+exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+"); }
               | exprAritmetica '-' termino
               | termino
              
@@ -133,7 +133,7 @@ exprAritmetica:	exprAritmetica '+' termino
               | '-' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
               ;
 
-termino: termino '*' factor 
+termino: termino '*' factor { crearTerceto("*"); }
        | termino '/' factor 
        | factor
        
@@ -143,8 +143,8 @@ termino: termino '*' factor
        | '/' factor          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 	
        ;
 
-factor: ID 
-      | CTEINT
+factor: ID { this.pilaTerceto.push((Token)$1.obj); }
+      | CTEINT { this.pilaTerceto.push((Token)$1.obj); }
       ;
 
 //IMPRESION
@@ -216,7 +216,12 @@ private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multip
 
 private List<Token> symbolsTable;
 
+public List<Terceto> tercetoList;
+
+private Stack pilaTerceto;
+
 private String functionName;
+private boolean functionNameNext;
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe, List<Token> st)
 	{
@@ -235,25 +240,30 @@ private String functionName;
 	    //Panel para marcar errores
 	    linePanel = new Style(uiMain.getjTextPane2());
 
-            this.pilaLoop = new Stack();
-            this.pilaBegin = new Stack();
+      this.pilaLoop = new Stack();
+      this.pilaBegin = new Stack();
 
-            this.functionName = "";
-            this.tmpId = new ArrayList<Token>();
+      this.functionName = "";
+      this.tmpId = new ArrayList<Token>();
 
-            this.symbolsTable = st;
+      this.tercetoList = new ArrayList<Terceto>();
+      this.pilaTerceto = new Stack();
+
+      this.symbolsTable = st;
+      this.functionNameNext = false;
 	}
 
     private int yylex() {
 
        Token tk = new Token();
 
+
        if(!la.hasMoreElements()){
            return 0;
        }else{
 
            tk = (Token)la.nextElement();
-           
+
            yylval = new ParserVal(tk);
 
            while (la.hasMoreElements() && tk.hasError()){
@@ -261,10 +271,16 @@ private String functionName;
                 tk = (Token)la.nextElement();
            }
 
+           if (this.functionNameNext){
+              this.functionName = tk.getToken();
+              addFunctionToSymbolsTable(tk);
+              this.functionNameNext = false;
+          }
+
            //System.out.println(tk.getType());
            
            if(tk.getType().equals("EOF"))
-               return 0;
+               return ';';
                
            if (tk.hasWarning()){
                 showErrorParser("Linea " + tk.getLine() + ": Warning Lexico: " + tk.getWarning());
@@ -302,7 +318,6 @@ private String functionName;
                         this.pilaBegin.pop();
                     } else {
                         showErrorParser("Linea " + tk.getLine() + ": END sin su correspondiente BEGIN");
-
                     }
                     return END;
                }
@@ -310,8 +325,10 @@ private String functionName;
                    return IMPORT;
                if(tk.getToken().equalsIgnoreCase("RETURN"))
                    return RETURN;
-               if(tk.getToken().equalsIgnoreCase("FUNCTION"))
+               if(tk.getToken().equalsIgnoreCase("FUNCTION")){
+                   this.functionNameNext = true;
                	   return FUNCTION;
+               }
            }else{
                if(tk.getType().equalsIgnoreCase("Identificador")){
                    return ID;
@@ -376,44 +393,57 @@ private String functionName;
         errorPanel.newLine();	
     }
 
-    private void modifyVariableNames(){
-        if (!this.functionName.equals("")){
-          for (Token t : this.tmpId){
-            t.setLexema(this.functionName + "&" + t.getToken());
+    private Token getTokenFromSymbolTable(String tokenId){
+        for (Token t : this.symbolsTable){
+            if (t.getToken().equals(tokenId)){
+                return t;
+            }
+        }
+        return null;
+    }
+        
+    private void saveVariableType(String tipo){
+        for (Token t: this.tmpId){
+            t.setVariableType(tipo);
+        }   
+    }
+
+    private void addFunctionNameToToken(String functionName, Token t){
+      if (!functionName.equals("")){
+        t.setLexema(functionName + "&" + t.getToken());
+        t.functionName = functionName;
+      }
+    }
+
+    private void addFunctionToSymbolsTable(Token t){
+      if (t.getType().equals("Identificador")){
+          Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
+          if (tokenInSymbolTable == null){
+            this.symbolsTable.add(t);
+          }else{
+            showErrorParser("Linea "+ t.getLine() +": Error Semantico: La funcion " + t.getToken() + " ya fue declarada");
           }
         }
     }
 
-    private Token getTokenFromSymbolTable(String tokenId){
-            for (Token t : this.symbolsTable){
-                if (t.getToken().equals(tokenId)){
-                    return t;
-                }
+    private void addTmpIdToSymbolsTable(){
+      for (Token t: this.tmpId){
+        if (t.getType().equals("Identificador")){
+          Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
+          if (tokenInSymbolTable == null){
+            this.symbolsTable.add(t);
+          }else{
+            if (!t.getToken().contains("&")){
+              showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
             }
-            return null;
+          }
         }
-        
-    private void saveVariableType(List<Token> l, String tipo){
-        
-        for (Token t: l){
-            if (t.getType().equals("Identificador")){
-                Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
-                if (tokenInSymbolTable.getVariableType().equals("")){
-                    t.setVariableType(tipo);
-                }else{
-                    showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
-                }
-            }
-        }   
+      }
     }
 
-    private void addFunctionNameToToken(String functionName, String variable){
-            if (!functionName.equals("")){
-                for (Token t : this.symbolsTable){
-                    if (t.getToken().equals(variable)){
-                        t.setLexema(functionName + "&" + variable);
-                        t.functionName = functionName;
-                    }
-                }
-            }
-        }
+    private void crearTerceto(String operador){
+      Object secondOperand = this.pilaTerceto.pop();
+      Object firstOperand = this.pilaTerceto.pop();
+      Terceto t = new Terceto(operador, firstOperand, secondOperand, null);
+      this.pilaTerceto.push(t);
+    }

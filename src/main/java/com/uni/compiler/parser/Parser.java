@@ -526,7 +526,12 @@ private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multip
 
 private List<Token> symbolsTable;
 
+public List<Terceto> tercetoList;
+
+private Stack pilaTerceto;
+
 private String functionName;
+private boolean functionNameNext;
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe, List<Token> st)
 	{
@@ -545,25 +550,30 @@ private String functionName;
 	    //Panel para marcar errores
 	    linePanel = new Style(uiMain.getjTextPane2());
 
-            this.pilaLoop = new Stack();
-            this.pilaBegin = new Stack();
+      this.pilaLoop = new Stack();
+      this.pilaBegin = new Stack();
 
-            this.functionName = "";
-            this.tmpId = new ArrayList<Token>();
+      this.functionName = "";
+      this.tmpId = new ArrayList<Token>();
 
-            this.symbolsTable = st;
+      this.tercetoList = new ArrayList<Terceto>();
+      this.pilaTerceto = new Stack();
+
+      this.symbolsTable = st;
+      this.functionNameNext = false;
 	}
 
     private int yylex() {
 
        Token tk = new Token();
 
+
        if(!la.hasMoreElements()){
            return 0;
        }else{
 
            tk = (Token)la.nextElement();
-           
+
            yylval = new ParserVal(tk);
 
            while (la.hasMoreElements() && tk.hasError()){
@@ -571,10 +581,16 @@ private String functionName;
                 tk = (Token)la.nextElement();
            }
 
+           if (this.functionNameNext){
+              this.functionName = tk.getToken();
+              addFunctionToSymbolsTable(tk);
+              this.functionNameNext = false;
+          }
+
            //System.out.println(tk.getType());
            
            if(tk.getType().equals("EOF"))
-               return 0;
+               return ';';
                
            if (tk.hasWarning()){
                 showErrorParser("Linea " + tk.getLine() + ": Warning Lexico: " + tk.getWarning());
@@ -612,7 +628,6 @@ private String functionName;
                         this.pilaBegin.pop();
                     } else {
                         showErrorParser("Linea " + tk.getLine() + ": END sin su correspondiente BEGIN");
-
                     }
                     return END;
                }
@@ -620,8 +635,10 @@ private String functionName;
                    return IMPORT;
                if(tk.getToken().equalsIgnoreCase("RETURN"))
                    return RETURN;
-               if(tk.getToken().equalsIgnoreCase("FUNCTION"))
+               if(tk.getToken().equalsIgnoreCase("FUNCTION")){
+                   this.functionNameNext = true;
                	   return FUNCTION;
+               }
            }else{
                if(tk.getType().equalsIgnoreCase("Identificador")){
                    return ID;
@@ -686,48 +703,59 @@ private String functionName;
         errorPanel.newLine();	
     }
 
-    private void modifyVariableNames(){
-        if (!this.functionName.equals("")){
-          for (Token t : this.tmpId){
-            t.setLexema(this.functionName + "&" + t.getToken());
+    private Token getTokenFromSymbolTable(String tokenId){
+        for (Token t : this.symbolsTable){
+            if (t.getToken().equals(tokenId)){
+                return t;
+            }
+        }
+        return null;
+    }
+        
+    private void saveVariableType(String tipo){
+        for (Token t: this.tmpId){
+            t.setVariableType(tipo);
+        }   
+    }
+
+    private void addFunctionNameToToken(String functionName, Token t){
+      if (!functionName.equals("")){
+        t.setLexema(functionName + "&" + t.getToken());
+        t.functionName = functionName;
+      }
+    }
+
+    private void addFunctionToSymbolsTable(Token t){
+      if (t.getType().equals("Identificador")){
+          Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
+          if (tokenInSymbolTable == null){
+            this.symbolsTable.add(t);
+          }else{
+            showErrorParser("Linea "+ t.getLine() +": Error Semantico: La funcion " + t.getToken() + " ya fue declarada");
           }
         }
     }
 
-    private Token getTokenFromSymbolTable(String tokenId){
-            for (Token t : this.symbolsTable){
-                if (t.getToken().equals(tokenId)){
-                    return t;
-                }
+    private void addTmpIdToSymbolsTable(){
+      for (Token t: this.tmpId){
+        if (t.getType().equals("Identificador")){
+          Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
+          if (tokenInSymbolTable == null){
+            this.symbolsTable.add(t);
+          }else{
+            if (!t.getToken().contains("&")){
+              showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
             }
-            return null;
+          }
         }
-        
-    private void saveVariableType(List<Token> l, String tipo){
-        
-        for (Token t: l){
-            if (t.getType().equals("Identificador")){
-                Token tokenInSymbolTable = getTokenFromSymbolTable(t.getToken());
-                if (tokenInSymbolTable.getVariableType().equals("")){
-                    t.setVariableType(tipo);
-                }else{
-                    showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
-                }
-            }
-        }   
+      }
     }
 
-    private void addFunctionNameToToken(String functionName, String variable){
-            if (!functionName.equals("")){
-                for (Token t : this.symbolsTable){
-                    if (t.getToken().equals(variable)){
-                        t.setLexema(functionName + "&" + variable);
-                        t.functionName = functionName;
-                    }
-                }
-            }
-        }
-//#line 677 "Parser.java"
+    private void crearTerceto(String operador){
+      Terceto t = new Terceto(operador, this.pilaTerceto.pop(), this.pilaTerceto.pop(), null);
+      this.pilaTerceto.push(t);
+    }
+//#line 705 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -884,30 +912,30 @@ boolean doaction;
 case 6:
 //#line 37 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": Declaracion de variables."); 
-                                      modifyVariableNames();
-                                      saveVariableType(this.tmpId, "INT");
+                                      saveVariableType("INT");
+                                      addTmpIdToSymbolsTable();
                                       this.tmpId = new ArrayList<Token>();
                                     }
 break;
 case 7:
 //#line 43 "gramatica.y"
-{ showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
+{ showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": Error Sintactico : Se esperaba ';'");  }
 break;
 case 8:
 //#line 46 "gramatica.y"
-{ this.tmpId.add((Token)val_peek(2).obj); addFunctionNameToToken(this.functionName, ((Token)val_peek(2).obj).getToken()); }
+{ addFunctionNameToToken(this.functionName, ((Token)val_peek(0).obj)); this.tmpId.add((Token)val_peek(0).obj);  }
 break;
 case 9:
 //#line 47 "gramatica.y"
-{ this.tmpId.add((Token)val_peek(0).obj); addFunctionNameToToken(this.functionName, ((Token)val_peek(0).obj).getToken()); }
+{ addFunctionNameToToken(this.functionName, ((Token)val_peek(0).obj)); this.tmpId.add((Token)val_peek(0).obj);  }
 break;
 case 10:
 //#line 50 "gramatica.y"
-{ this.functionName = ""; }
+{ }
 break;
 case 11:
 //#line 53 "gramatica.y"
-{ showInfoParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Cuerpo de la funcion."); }
+{ showInfoParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Cuerpo de la funcion."); this.functionName = ""; }
 break;
 case 12:
 //#line 55 "gramatica.y"
@@ -923,11 +951,11 @@ case 14:
 break;
 case 15:
 //#line 60 "gramatica.y"
-{ showInfoParser("Linea " + ((Token)val_peek(0).obj).getLine() + ": " + "Variables de la funcion."); this.functionName = ((Token)val_peek(0).obj).getToken(); }
+{ showInfoParser("Linea " + ((Token)val_peek(0).obj).getLine() + ": " + "Variables de la funcion."); }
 break;
 case 16:
 //#line 61 "gramatica.y"
-{ showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "sentencia IMPORT de la funcion."); this.functionName = ((Token)val_peek(2).obj).getToken();}
+{ showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }
 break;
 case 26:
 //#line 79 "gramatica.y"
@@ -963,7 +991,7 @@ case 35:
 break;
 case 43:
 //#line 114 "gramatica.y"
-{ showErrorParser("Linea " + ((Token)val_peek(0).obj).getLine() + ": " + "Error Sintactico : Sentencia Invalida"); }
+{ showErrorParser("Linea " + ((Token)val_peek(0).obj).getLine() + ": Error Sintactico : Sentencia Invalida"); }
 break;
 case 44:
 //#line 119 "gramatica.y"
@@ -981,6 +1009,10 @@ case 47:
 //#line 123 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
 break;
+case 48:
+//#line 126 "gramatica.y"
+{ crearTerceto("+"); }
+break;
 case 51:
 //#line 130 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
@@ -997,6 +1029,10 @@ case 54:
 //#line 133 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
+case 55:
+//#line 136 "gramatica.y"
+{ crearTerceto("*"); }
+break;
 case 58:
 //#line 140 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
@@ -1012,6 +1048,14 @@ break;
 case 61:
 //#line 143 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
+break;
+case 62:
+//#line 146 "gramatica.y"
+{ this.pilaTerceto.push((Token)val_peek(0).obj); }
+break;
+case 63:
+//#line 147 "gramatica.y"
+{ this.pilaTerceto.push((Token)val_peek(0).obj); }
 break;
 case 64:
 //#line 152 "gramatica.y"
@@ -1085,7 +1129,7 @@ case 90:
 //#line 195 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
 break;
-//#line 1030 "Parser.java"
+//#line 1074 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
