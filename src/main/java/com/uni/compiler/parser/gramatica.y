@@ -116,7 +116,7 @@ sentencia: asignacion ';'
 
 //ASIGNACION
 
-asignacion: ID '=' exprAritmetica   { /*showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");*/ }
+asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion."); this.pilaTerceto.push((Token)$1.obj); crearTerceto("="); }
          
           | '=' exprAritmetica      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera Identificador antes de ="); }
           | ID '=' error            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera un valor para asignar al Identificador."); }
@@ -124,7 +124,7 @@ asignacion: ID '=' exprAritmetica   { /*showInfoParser("Linea " + ((Token)$1.obj
           ;
 
 exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+"); }
-              | exprAritmetica '-' termino
+              | exprAritmetica '-' termino { crearTerceto("-"); }
               | termino
              
               | exprAritmetica '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -134,7 +134,7 @@ exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+"); }
               ;
 
 termino: termino '*' factor { crearTerceto("*"); }
-       | termino '/' factor 
+       | termino '/' factor { crearTerceto("/"); }
        | factor
        
        | termino '*' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -217,6 +217,7 @@ private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multip
 private List<Token> symbolsTable;
 
 public List<Terceto> tercetoList;
+private int tercetoId;
 
 private Stack pilaTerceto;
 
@@ -251,7 +252,8 @@ private boolean functionNameNext;
 
       this.symbolsTable = st;
       this.functionNameNext = false;
-	}
+      this.tercetoId = 1;
+    }
 
     private int yylex() {
 
@@ -444,6 +446,9 @@ private boolean functionNameNext;
     private void crearTerceto(String operador){
       Object secondOperand = this.pilaTerceto.pop();
       Object firstOperand = this.pilaTerceto.pop();
-      Terceto t = new Terceto(operador, firstOperand, secondOperand, null);
-      this.pilaTerceto.push(t);
+      Terceto t = new Terceto(operador, firstOperand, secondOperand, null, this.tercetoId);
+      this.tercetoId++;
+      this.tercetoList.add(t);
     }
+
+    public List<Terceto> getTercetoList(){ return this.tercetoList; }

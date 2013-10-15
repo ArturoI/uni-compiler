@@ -5,12 +5,14 @@ public class Terceto {
     private Object secondOperand;
     private Object Operator;
     private Object Value;
+    private int id;
 
-    public Terceto(Object o, Object fo, Object so, Object v){
+    public Terceto(Object o, Object fo, Object so, Object v, int id){
         this.Operator = o;
         this.firstOperand = fo;
         this.secondOperand = so;
         this.Value = v;
+        this.id = id;
     }
 
     public Object getFirstOperand() {
@@ -43,6 +45,23 @@ public class Terceto {
 
     public void setValue(Object Value) {
         this.Value = Value;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+    
+    @Override
+    public String toString(){
+        String terceto;
+        terceto = "[" + this.id + "]: " + this.Operator.toString();
+        terceto += " " + this.firstOperand.toString();
+        terceto += " " + this.secondOperand.toString();
+        return terceto;
     }
     
 }

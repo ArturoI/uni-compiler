@@ -31,7 +31,6 @@ import com.uni.compiler.lexicAnalizer.*;
 
 
 public class Parser
-             implements ParserTokens
 {
 
 boolean yydebug;        //do I want debug output?
@@ -164,6 +163,25 @@ final ParserVal dup_yyval(ParserVal val)
   return dup;
 }
 //#### end semantic value section ####
+public final static short ID=257;
+public final static short INT=258;
+public final static short CTEINT=259;
+public final static short STRING=260;
+public final static short IF=261;
+public final static short THEN=262;
+public final static short ELSE=263;
+public final static short BEGIN=264;
+public final static short END=265;
+public final static short IMPORT=266;
+public final static short MENORIGUAL=267;
+public final static short MAYORIGUAL=268;
+public final static short IGUAL=269;
+public final static short DISTINTO=270;
+public final static short LOOP=271;
+public final static short UNTIL=272;
+public final static short PRINT=273;
+public final static short RETURN=274;
+public final static short FUNCTION=275;
 public final static short YYERRCODE=256;
 final static short yylhs[] = {                           -1,
     0,    1,    1,    3,    3,    4,    4,    6,    6,    5,
@@ -527,6 +545,7 @@ private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multip
 private List<Token> symbolsTable;
 
 public List<Terceto> tercetoList;
+private int tercetoId;
 
 private Stack pilaTerceto;
 
@@ -561,7 +580,8 @@ private boolean functionNameNext;
 
       this.symbolsTable = st;
       this.functionNameNext = false;
-	}
+      this.tercetoId = 1;
+    }
 
     private int yylex() {
 
@@ -752,10 +772,15 @@ private boolean functionNameNext;
     }
 
     private void crearTerceto(String operador){
-      Terceto t = new Terceto(operador, this.pilaTerceto.pop(), this.pilaTerceto.pop(), null);
-      this.pilaTerceto.push(t);
+      Object secondOperand = this.pilaTerceto.pop();
+      Object firstOperand = this.pilaTerceto.pop();
+      Terceto t = new Terceto(operador, firstOperand, secondOperand, null, this.tercetoId);
+      this.tercetoId++;
+      this.tercetoList.add(t);
     }
-//#line 705 "Parser.java"
+
+    public List<Terceto> getTercetoList(){ return this.tercetoList; }
+//#line 712 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -995,7 +1020,7 @@ case 43:
 break;
 case 44:
 //#line 119 "gramatica.y"
-{ /*showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");*/ }
+{ showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Asignacion."); crearTerceto("="); }
 break;
 case 45:
 //#line 121 "gramatica.y"
@@ -1012,6 +1037,10 @@ break;
 case 48:
 //#line 126 "gramatica.y"
 { crearTerceto("+"); }
+break;
+case 49:
+//#line 127 "gramatica.y"
+{ crearTerceto("-"); }
 break;
 case 51:
 //#line 130 "gramatica.y"
@@ -1032,6 +1061,10 @@ break;
 case 55:
 //#line 136 "gramatica.y"
 { crearTerceto("*"); }
+break;
+case 56:
+//#line 137 "gramatica.y"
+{ crearTerceto("/"); }
 break;
 case 58:
 //#line 140 "gramatica.y"
@@ -1129,7 +1162,7 @@ case 90:
 //#line 195 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
 break;
-//#line 1074 "Parser.java"
+//#line 1089 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

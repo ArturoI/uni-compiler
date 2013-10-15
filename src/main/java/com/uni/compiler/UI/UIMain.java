@@ -14,6 +14,7 @@ package com.uni.compiler.UI;
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 import com.uni.compiler.lexicAnalizer.Token;
 import com.uni.compiler.parser.Parser;
+import com.uni.compiler.parser.Terceto;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -510,6 +511,15 @@ public class UIMain extends javax.swing.JFrame {
             }
             List.setModel(modelo);
             List.setVisible(true);
+            
+            List<Terceto> tercetos = this.parser.getTercetoList();
+            Style lexPanel = new Style(this.jTextPane3);
+            lexPanel.setNegrita("Lista de Tercetos:");
+            lexPanel.newLine();
+            for (Terceto t: tercetos){
+                lexPanel.setNegrita(t.toString());
+                lexPanel.newLine();
+            }
         }
         else
             this.List.setVisible(false);
