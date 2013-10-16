@@ -523,7 +523,7 @@ final static String yyrule[] = {
 "iteracion : LOOP UNTIL condicion",
 };
 
-//#line 199 "gramatica.y"
+//#line 206 "gramatica.y"
 
 /*_________________________________________________________________________________________________________*/
 
@@ -771,16 +771,24 @@ private boolean functionNameNext;
       }
     }
 
-    private void crearTerceto(String operador){
-      Object secondOperand = this.pilaTerceto.pop();
-      Object firstOperand = this.pilaTerceto.pop();
-      Terceto t = new Terceto(operador, firstOperand, secondOperand, null, this.tercetoId);
-      this.tercetoId++;
+    // si presedencia 1 => operacion, primer Operando, segundo Operando
+    // si presedencia 2 => operacion, segundo Operando, primer Operando
+    private void crearTerceto(String operador, int presedencia){
+      Object operand1 = this.pilaTerceto.pop();
+      Object operand2 = this.pilaTerceto.pop();
+      Terceto t;
+      if (presedencia == 1){
+        t = new Terceto(operador, operand1, operand2, null, this.tercetoId);
+      } else {
+        t = new Terceto(operador, operand2, operand1, null, this.tercetoId);
+      }
       this.tercetoList.add(t);
+      this.pilaTerceto.push(this.tercetoId);
+      this.tercetoId++;
     }
 
     public List<Terceto> getTercetoList(){ return this.tercetoList; }
-//#line 712 "Parser.java"
+//#line 720 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1020,149 +1028,156 @@ case 43:
 break;
 case 44:
 //#line 119 "gramatica.y"
-{ showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Asignacion."); crearTerceto("="); }
+{ showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Asignacion.");
+                                      this.pilaTerceto.push((Token)val_peek(2).obj);
+                                      crearTerceto("=", 1);
+                                    }
 break;
 case 45:
-//#line 121 "gramatica.y"
+//#line 124 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Se espera Identificador antes de ="); }
 break;
 case 46:
-//#line 122 "gramatica.y"
+//#line 125 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Se espera un valor para asignar al Identificador."); }
 break;
 case 47:
-//#line 123 "gramatica.y"
+//#line 126 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
 break;
 case 48:
-//#line 126 "gramatica.y"
-{ crearTerceto("+"); }
+//#line 129 "gramatica.y"
+{ crearTerceto("+", 2); }
 break;
 case 49:
-//#line 127 "gramatica.y"
-{ crearTerceto("-"); }
+//#line 130 "gramatica.y"
+{ crearTerceto("-", 2); }
 break;
 case 51:
-//#line 130 "gramatica.y"
+//#line 133 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 52:
-//#line 131 "gramatica.y"
+//#line 134 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 53:
-//#line 132 "gramatica.y"
+//#line 135 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 54:
-//#line 133 "gramatica.y"
+//#line 136 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 55:
-//#line 136 "gramatica.y"
-{ crearTerceto("*"); }
+//#line 139 "gramatica.y"
+{ crearTerceto("*", 2); }
 break;
 case 56:
-//#line 137 "gramatica.y"
-{ crearTerceto("/"); }
+//#line 140 "gramatica.y"
+{ crearTerceto("/", 2); }
 break;
 case 58:
-//#line 140 "gramatica.y"
+//#line 143 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 59:
-//#line 141 "gramatica.y"
+//#line 144 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 60:
-//#line 142 "gramatica.y"
+//#line 145 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 61:
-//#line 143 "gramatica.y"
+//#line 146 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }
 break;
 case 62:
-//#line 146 "gramatica.y"
+//#line 149 "gramatica.y"
 { this.pilaTerceto.push((Token)val_peek(0).obj); }
 break;
 case 63:
-//#line 147 "gramatica.y"
+//#line 150 "gramatica.y"
 { this.pilaTerceto.push((Token)val_peek(0).obj); }
 break;
 case 64:
-//#line 152 "gramatica.y"
-{ showInfoParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Impresion");  }
+//#line 155 "gramatica.y"
+{ showInfoParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Impresion");
+                                          this.pilaTerceto.push(new Token());
+                                          this.pilaTerceto.push((Token)val_peek(2).obj);
+                                          crearTerceto("Print", 1);
+                                        }
 break;
 case 65:
-//#line 154 "gramatica.y"
+//#line 161 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
 break;
 case 66:
-//#line 155 "gramatica.y"
+//#line 162 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
 break;
 case 67:
-//#line 156 "gramatica.y"
+//#line 163 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Se esperaba '('"); }
 break;
 case 68:
-//#line 157 "gramatica.y"
+//#line 164 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Se esperaba una cadena para imprimir"); }
 break;
 case 69:
-//#line 158 "gramatica.y"
+//#line 165 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Se esperaba () son requeridos para imprimir"); }
 break;
 case 70:
-//#line 159 "gramatica.y"
+//#line 166 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Se esperaba la cadena a imprimir y ')'"); }
 break;
 case 71:
-//#line 160 "gramatica.y"
+//#line 167 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(1).obj).getLine() + ": " + "Error Sintactico : Se esperaba '(' y la cadena a imprimir"); }
 break;
 case 72:
-//#line 161 "gramatica.y"
+//#line 168 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(0).obj).getLine() + ": " + "Error Sintactico : Se esperaba '(' la cadena a imprimir y ')'"); }
 break;
 case 73:
-//#line 166 "gramatica.y"
+//#line 173 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Sentencia IF"); }
 break;
 case 74:
-//#line 167 "gramatica.y"
+//#line 174 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(5).obj).getLine() + ": " + "Sentencia IF-ELSE");  }
 break;
 case 75:
-//#line 169 "gramatica.y"
+//#line 176 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
 break;
 case 77:
-//#line 174 "gramatica.y"
+//#line 181 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
 break;
 case 78:
-//#line 175 "gramatica.y"
+//#line 182 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
 break;
 case 79:
-//#line 176 "gramatica.y"
+//#line 183 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
 break;
 case 80:
-//#line 177 "gramatica.y"
+//#line 184 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
 break;
 case 89:
-//#line 194 "gramatica.y"
+//#line 201 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Sentencia LOOP-UNTIL"); }
 break;
 case 90:
-//#line 195 "gramatica.y"
+//#line 202 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
 break;
-//#line 1089 "Parser.java"
+//#line 1104 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

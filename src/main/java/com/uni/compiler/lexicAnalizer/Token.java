@@ -83,5 +83,10 @@ public class Token {
         public String getVariableType() {
             return variableType;
         }
+        
+        @Override
+        public String toString(){
+            return this.lexema;
+        }
 
 }

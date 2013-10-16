@@ -116,15 +116,18 @@ sentencia: asignacion ';'
 
 //ASIGNACION
 
-asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion."); this.pilaTerceto.push((Token)$1.obj); crearTerceto("="); }
+asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");
+                                      this.pilaTerceto.push((Token)$1.obj);
+                                      crearTerceto("=", 1);
+                                    }
          
           | '=' exprAritmetica      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera Identificador antes de ="); }
           | ID '=' error            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera un valor para asignar al Identificador."); }
           | ID exprAritmetica       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
           ;
 
-exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+"); }
-              | exprAritmetica '-' termino { crearTerceto("-"); }
+exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+", 2); }
+              | exprAritmetica '-' termino { crearTerceto("-", 2); }
               | termino
              
               | exprAritmetica '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -133,8 +136,8 @@ exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+"); }
               | '-' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
               ;
 
-termino: termino '*' factor { crearTerceto("*"); }
-       | termino '/' factor { crearTerceto("/"); }
+termino: termino '*' factor { crearTerceto("*", 2); }
+       | termino '/' factor { crearTerceto("/", 2); }
        | factor
        
        | termino '*' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -149,7 +152,11 @@ factor: ID { this.pilaTerceto.push((Token)$1.obj); }
 
 //IMPRESION
 
-impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");  }
+impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");
+                                          this.pilaTerceto.push(new Token());
+                                          this.pilaTerceto.push((Token)$3.obj);
+                                          crearTerceto("Print", 1);
+                                        }
          
          | PRINT '(' STRING ')' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
          | PRINT '(' STRING error       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
@@ -443,12 +450,20 @@ private boolean functionNameNext;
       }
     }
 
-    private void crearTerceto(String operador){
-      Object secondOperand = this.pilaTerceto.pop();
-      Object firstOperand = this.pilaTerceto.pop();
-      Terceto t = new Terceto(operador, firstOperand, secondOperand, null, this.tercetoId);
-      this.tercetoId++;
+    // si presedencia 1 => operacion, primer Operando, segundo Operando
+    // si presedencia 2 => operacion, segundo Operando, primer Operando
+    private void crearTerceto(String operador, int presedencia){
+      Object operand1 = this.pilaTerceto.pop();
+      Object operand2 = this.pilaTerceto.pop();
+      Terceto t;
+      if (presedencia == 1){
+        t = new Terceto(operador, operand1, operand2, null, this.tercetoId);
+      } else {
+        t = new Terceto(operador, operand2, operand1, null, this.tercetoId);
+      }
       this.tercetoList.add(t);
+      this.pilaTerceto.push(this.tercetoId);
+      this.tercetoId++;
     }
 
     public List<Terceto> getTercetoList(){ return this.tercetoList; }

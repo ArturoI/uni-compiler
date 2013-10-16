@@ -55,12 +55,22 @@ public class Terceto {
         return id;
     }
     
+    private String operandToString(Object o){
+        String s;
+        if (o instanceof Integer){
+            s = "[terceto-" + o.toString() + "]";
+        } else {
+            s = o.toString();
+        }
+        return s;
+    }
+    
     @Override
     public String toString(){
         String terceto;
-        terceto = "[" + this.id + "]: " + this.Operator.toString();
-        terceto += " " + this.firstOperand.toString();
-        terceto += " " + this.secondOperand.toString();
+        terceto = "[terceto-" + this.id + "]: \"" + this.Operator.toString() + "\"";
+        terceto += " | " + operandToString(this.firstOperand);
+        terceto += " | " + operandToString(this.secondOperand);
         return terceto;
     }
     
