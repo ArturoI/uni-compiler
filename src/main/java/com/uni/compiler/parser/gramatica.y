@@ -155,7 +155,7 @@ factor: ID { this.pilaTerceto.push((Token)$1.obj); }
 impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");
                                           this.pilaTerceto.push(new Token());
                                           this.pilaTerceto.push((Token)$3.obj);
-                                          crearTerceto("Print", 1);
+                                          crearTerceto("@PRINT", 1);
                                         }
          
          | PRINT '(' STRING ')' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
@@ -170,13 +170,22 @@ impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).
 
 //SELECCION
 
-seleccion: IF condicion THEN sentenciaSeleccion                          { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF"); }
-         | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }
-         
+seleccion: IF condicion THEN sentenciaSeleccion                          { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
+                                                                           //this.pi.set((Integer)this.pila.pop(),new DPI(this.pi.size()+2));
+                                                                           //Agregar metodo para setear en el terceto X la direccion de salto Y.
+                                                                           setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoId + 2);
+                                                                           this.pilaBranches.push(this.tercetoId);
+                                                                           this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null, ++this.tercetoId ));
+                                                                         }
+
+         | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }         
          | IF condicion error                                            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
 
-condicion: '(' exprAritmetica opLogico exprAritmetica ')'
+condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto(((Token)$3.obj).getToken(), 2); 
+                                                            this.pilaBranches.push(this.tercetoId);
+                                                            this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null, ++this.tercetoId));
+                                                          }
          
          | exprAritmetica opLogico exprAritmetica ')'            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
          | '(' exprAritmetica opLogico exprAritmetica error      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
@@ -225,6 +234,7 @@ private List<Token> symbolsTable;
 
 public List<Terceto> tercetoList;
 private int tercetoId;
+private Stack pilaBranches;	  //para el seguimiento de terceto.
 
 private Stack pilaTerceto;
 
@@ -256,6 +266,7 @@ private boolean functionNameNext;
 
       this.tercetoList = new ArrayList<Terceto>();
       this.pilaTerceto = new Stack();
+      this.pilaBranches = new Stack();
 
       this.symbolsTable = st;
       this.functionNameNext = false;
@@ -467,3 +478,11 @@ private boolean functionNameNext;
     }
 
     public List<Terceto> getTercetoList(){ return this.tercetoList; }
+
+    private void setDireccionDeSaltoEnTerceto(Integer terceto, int dirDeSalto){
+        for (Terceto t: this.tercetoList){
+            if (t.getId() == terceto){
+                t.setFirstOperand(dirDeSalto);
+            }
+        }
+    }

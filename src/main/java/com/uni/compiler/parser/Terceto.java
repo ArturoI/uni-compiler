@@ -7,6 +7,10 @@ public class Terceto {
     private Object Value;
     private int id;
 
+    public Terceto(int id){
+        this.id = id;
+    }
+
     public Terceto(Object o, Object fo, Object so, Object v, int id){
         this.Operator = o;
         this.firstOperand = fo;
