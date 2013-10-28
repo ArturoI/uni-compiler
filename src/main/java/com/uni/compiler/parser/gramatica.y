@@ -83,9 +83,19 @@ returnF: RETURN '(' exprAritmetica ')'
 
 //SELECCION
 
-seleccionF: IF condicion THEN sentenciaSeleccionF                            { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF"); }
-          | IF condicion THEN sentenciaSeleccionF ELSE sentenciaSeleccionF   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }
-          | IF condicion sentenciaSeleccionF                                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
+seleccionF: IF condicion THEN sentenciaSeleccionF   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
+                                                      setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
+                                                    }
+          | IF condicion THEN sentenciaSeleccionF ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
+                                                  setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 2);
+                                                  this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
+                                                  //System.out.println("agregue un BI en la posicion " + this.tercetoList.size());
+                                                  this.pilaBranches.push(this.tercetoList.size());
+                                                  //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BI");
+                                                } sentenciaSeleccionF  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
+                                                                         setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
+                                                }
+          | IF condicion sentenciaSeleccionF    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
           ;
 
 sentenciaSeleccionF: BEGIN sentenciasF END
@@ -118,7 +128,7 @@ sentencia: asignacion ';'
 
 asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");
                                       this.pilaTerceto.push((Token)$1.obj);
-                                      crearTerceto("=", 1);
+                                      crearTerceto("MOV", 1);
                                     }
          
           | '=' exprAritmetica      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera Identificador antes de ="); }
@@ -126,8 +136,8 @@ asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).
           | ID exprAritmetica       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Asignacion no valida."); }
           ;
 
-exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+", 2); }
-              | exprAritmetica '-' termino { crearTerceto("-", 2); }
+exprAritmetica:	exprAritmetica '+' termino { crearTerceto("ADD", 2); }
+              | exprAritmetica '-' termino { crearTerceto("SUB", 2); }
               | termino
              
               | exprAritmetica '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -136,8 +146,8 @@ exprAritmetica:	exprAritmetica '+' termino { crearTerceto("+", 2); }
               | '-' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
               ;
 
-termino: termino '*' factor { crearTerceto("*", 2); }
-       | termino '/' factor { crearTerceto("/", 2); }
+termino: termino '*' factor { crearTerceto("MUL", 2); }
+       | termino '/' factor { crearTerceto("DIV", 2); }
        | factor
        
        | termino '*' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -155,7 +165,7 @@ factor: ID { this.pilaTerceto.push((Token)$1.obj); }
 impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Impresion");
                                           this.pilaTerceto.push(new Token());
                                           this.pilaTerceto.push((Token)$3.obj);
-                                          crearTerceto("@PRINT", 1);
+                                          crearTerceto("PRINT", 1);
                                         }
          
          | PRINT '(' STRING ')' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ';'");  }
@@ -170,22 +180,29 @@ impresion: PRINT '(' STRING ')' ';'	{ showInfoParser("Linea " + ((Token)$1.obj).
 
 //SELECCION
 
-seleccion: IF condicion THEN sentenciaSeleccion                          { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
-                                                                           //this.pi.set((Integer)this.pila.pop(),new DPI(this.pi.size()+2));
-                                                                           //Agregar metodo para setear en el terceto X la direccion de salto Y.
-                                                                           setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoId + 2);
-                                                                           this.pilaBranches.push(this.tercetoId);
-                                                                           this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null, ++this.tercetoId ));
-                                                                         }
+seleccion: IF condicion THEN sentenciaSeleccion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
+                                                  setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
+                                                 }
 
-         | IF condicion THEN sentenciaSeleccion ELSE sentenciaSeleccion  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");  }         
-         | IF condicion error                                            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
+         | IF condicion THEN sentenciaSeleccion ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
+                                                  setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 2);
+                                                  this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
+                                                  //System.out.println("agregue un BI en la posicion " + this.tercetoList.size());
+                                                  this.pilaBranches.push(this.tercetoList.size());
+                                                  //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BI");
+                                                  createLabel();
+                                                } sentenciaSeleccion { setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1); createLabel();}         
+         
+         | IF condicion error                   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
 
-condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto(((Token)$3.obj).getToken(), 2); 
-                                                            this.pilaBranches.push(this.tercetoId);
-                                                            this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null, ++this.tercetoId));
+condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto(((Token)$3.obj).getToken(), 2);
+                                                            this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));
+                                                            //System.out.println("agregue un BF en la posicion " + this.tercetoList.size());
+                                                            this.pilaBranches.push(this.tercetoList.size());
+                                                            //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BF");
                                                           }
+
          
          | exprAritmetica opLogico exprAritmetica ')'            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
          | '(' exprAritmetica opLogico exprAritmetica error      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
@@ -205,9 +222,23 @@ sentenciaSeleccion: BEGIN sentencias END
                   | sentencia
                   ;
 
-// ITERACION
-
-iteracion: LOOP sentencias UNTIL condicion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL"); }
+// ITERACION 
+                
+iteracion: LOOP {
+                    this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
+                    this.pilaBranches.push(this.tercetoList.size());
+                    createLabelForLoop();
+                } sentencias UNTIL {
+                    createLabel();
+                    setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size());
+                } condicion { 
+                    showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
+                    setDireccionDeSaltoEnTerceto(this.tercetoList.size(), this.tercetoList.size() + 2);
+                    this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
+                    setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
+                    //this.pilaBranches.push(this.tercetoList.size());
+                    createLabel();
+                }
          | LOOP UNTIL condicion            { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }      
          ;
 
@@ -233,13 +264,14 @@ private List<Token> tmpId; //vector de ids de delaraciones y asignaciones multip
 private List<Token> symbolsTable;
 
 public List<Terceto> tercetoList;
-private int tercetoId;
 private Stack pilaBranches;	  //para el seguimiento de terceto.
-
 private Stack pilaTerceto;
+private Stack pilaLoopLabel;
 
 private String functionName;
 private boolean functionNameNext;
+
+private int loopLabelNumber;
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe, List<Token> st)
 	{
@@ -267,10 +299,13 @@ private boolean functionNameNext;
       this.tercetoList = new ArrayList<Terceto>();
       this.pilaTerceto = new Stack();
       this.pilaBranches = new Stack();
+      this.pilaLoopLabel = new Stack();
 
       this.symbolsTable = st;
       this.functionNameNext = false;
-      this.tercetoId = 1;
+
+
+      loopLabelNumber = 1;
     }
 
     private int yylex() {
@@ -468,21 +503,36 @@ private boolean functionNameNext;
       Object operand2 = this.pilaTerceto.pop();
       Terceto t;
       if (presedencia == 1){
-        t = new Terceto(operador, operand1, operand2, null, this.tercetoId);
+        t = new Terceto(operador, operand1, operand2, null);
       } else {
-        t = new Terceto(operador, operand2, operand1, null, this.tercetoId);
+        t = new Terceto(operador, operand2, operand1, null);
       }
       this.tercetoList.add(t);
-      this.pilaTerceto.push(this.tercetoId);
-      this.tercetoId++;
+      this.pilaTerceto.push(this.tercetoList.size());
     }
 
     public List<Terceto> getTercetoList(){ return this.tercetoList; }
 
     private void setDireccionDeSaltoEnTerceto(Integer terceto, int dirDeSalto){
-        for (Terceto t: this.tercetoList){
-            if (t.getId() == terceto){
-                t.setFirstOperand(dirDeSalto);
-            }
-        }
+        ((Terceto) this.tercetoList.get(terceto - 1)).setFirstOperand("LABEL" + dirDeSalto);
+        System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
+        System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
+    }
+
+    private void setDireccionDeSaltoEnTercetoLabelLoop(Integer terceto, int dirDeSalto){
+        ((Terceto) this.tercetoList.get(terceto - 1)).setFirstOperand("LABLOOP" + dirDeSalto);
+        System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
+        System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
+    }
+
+    private void createLabel(){
+      Token label = new Token(); label.setLexema("LABEL" + Integer.toString(this.tercetoList.size() + 1));
+      this.tercetoList.add(new Terceto("LABEL", label, new Token(), null));
+    }
+
+    private void createLabelForLoop(){
+      this.pilaLoopLabel.push(this.loopLabelNumber);
+      Token label = new Token(); label.setLexema("LABLOOP" + Integer.toString(this.loopLabelNumber));
+      this.tercetoList.add(new Terceto("LABEL", label, new Token(), null));
+      this.loopLabelNumber++;
     }

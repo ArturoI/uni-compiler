@@ -514,10 +514,12 @@ public class UIMain extends javax.swing.JFrame {
             
             List<Terceto> tercetos = this.parser.getTercetoList();
             Style lexPanel = new Style(this.jTextPane3);
-            lexPanel.setNegrita("Lista de Tercetos:");
+            lexPanel.setNegrita("============  T E R C E T O S  ============");
             lexPanel.newLine();
+            int i = 1;
             for (Terceto t: tercetos){
-                lexPanel.setNegrita(t.toString());
+                lexPanel.setNegrita(i + ": " + t.toString());
+                i++;
                 lexPanel.newLine();
             }
         }
