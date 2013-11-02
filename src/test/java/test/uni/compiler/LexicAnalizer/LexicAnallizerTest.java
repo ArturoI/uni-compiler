@@ -3,7 +3,7 @@ package test.uni.compiler.LexicAnalizer;
 import java.io.IOException;
 
 //import org.junit.Test;
-
+//just a test
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 import com.uni.compiler.lexicAnalizer.Token;
 
