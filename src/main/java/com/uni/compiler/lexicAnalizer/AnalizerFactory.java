@@ -20,6 +20,8 @@ import com.uni.compiler.Actions.OperationAction;
 import com.uni.compiler.Actions.NCOperationAction;
 import com.uni.compiler.Actions.StringAction;
 
+// Analizer Factory
+
 public class AnalizerFactory {
 	private LexicAnalizer lexicAnalizer;
 	private HashMap<String, String> reservedWords = new HashMap<String, String>();
