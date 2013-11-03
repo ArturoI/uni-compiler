@@ -504,7 +504,6 @@ public class UIMain extends javax.swing.JFrame {
 
         if (this.ButtonST.isSelected()){
             this.ButtonRWT.setSelected(false);
-            
             Iterator it = this.symbolsTable.iterator();
             while (it.hasNext()) {
                 modelo.addElement( (((Token) it.next()).getToken()) );

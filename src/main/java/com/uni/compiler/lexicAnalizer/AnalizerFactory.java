@@ -20,7 +20,7 @@ import com.uni.compiler.Actions.OperationAction;
 import com.uni.compiler.Actions.NCOperationAction;
 import com.uni.compiler.Actions.StringAction;
 
-// Analizer Factory
+// Analizer Factory     
 
 public class AnalizerFactory {
 	private LexicAnalizer lexicAnalizer;

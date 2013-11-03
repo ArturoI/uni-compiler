@@ -47,7 +47,7 @@ conjVariables: conjVariables ',' ID { addFunctionNameToToken(this.functionName, 
              | ID                   { addFunctionNameToToken(this.functionName, ((Token)$1.obj)); this.tmpId.add((Token)$1.obj);  }
 	     ;
 
-funcion: FUNCTION ID bloqueFuncion { }
+funcion: FUNCTION ID { this.tercetoList.add(new Terceto("LABEL", "F" + ((Token)$2.obj).getToken(), new Token(), null)); } bloqueFuncion { executingFunctionCode = false; }
        ;
 
 bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion."); this.functionName = ""; }
@@ -57,8 +57,8 @@ bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea 
                 | BEGIN declaracionFuncion sentenciasF error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se espera END");  }
                 ;
 
-declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); }//this.functionName = ((Token)$0.obj).getToken(); }
-		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }//this.functionName = ((Token)$0.obj).getToken();}
+declaracionFuncion: variables			{ showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Variables de la funcion."); executingFunctionCode = true; }
+		  | IMPORT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "sentencia IMPORT de la funcion."); }
 		  ;
 
 sentenciasF: sentenciasF sentenciaF
@@ -73,9 +73,10 @@ sentenciaF: asignacion ';'
           | iteracionF
           ;
 
-//RETURN
+//RETURN En EAX se guarda el resultado de retorno de la funcion.
 
-returnF: RETURN '(' exprAritmetica ')'
+returnF: RETURN '(' exprAritmetica ')'      { this.tercetoList.add(new Terceto("RET", new Token("EXP"), new Token(), null)); }
+       | RETURN '('')'                      { this.tercetoList.add(new Terceto("RET", new Token("0"), new Token(), null)); }
        | RETURN error                       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('"); }
        | RETURN '(' error                   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para retornar"); }
        | RETURN '(' exprAritmetica error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
@@ -92,21 +93,26 @@ seleccionF: IF condicion THEN sentenciaSeleccionF   { showInfoParser("Linea " + 
                                                   //System.out.println("agregue un BI en la posicion " + this.tercetoList.size());
                                                   this.pilaBranches.push(this.tercetoList.size());
                                                   //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BI");
-                                                } sentenciaSeleccionF  { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
-                                                                         setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
-                                                }
+                                                  createLabel();
+                                                } sentenciaSeleccionF  { setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1); createLabel(); }
           | IF condicion sentenciaSeleccionF    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
           ;
-
+         
 sentenciaSeleccionF: BEGIN sentenciasF END
                    | sentenciaF
                    ;
 
 // ITERACION
 
-iteracionF: LOOP sentenciasF UNTIL condicion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL"); }
+iteracionF: LOOP { createLabelForLoop(); } sentenciasF UNTIL condicion { 
+                    showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
+                    setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
+                }
           | LOOP UNTIL condicion             { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
           ;
+
+
+
 
 //- - - - - - - - - - - - - - - - - F I N   D E C L A R A C I O N - - - - - - - - - - - - - - - - -
 
@@ -121,12 +127,15 @@ sentencia: asignacion ';'
          | impresion
          | seleccion
          | iteracion
+         | llamadaAFuncion
          | error { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": Error Sintactico : Sentencia Invalida"); }
          ;
 
 //ASIGNACION
 
 asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Asignacion.");
+                                      checkContain((Token)$1.obj);
+                                      checkNameMangling((Token)$1.obj);
                                       this.pilaTerceto.push((Token)$1.obj);
                                       crearTerceto("MOV", 1);
                                     }
@@ -156,7 +165,7 @@ termino: termino '*' factor { crearTerceto("MUL", 2); }
        | '/' factor          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 	
        ;
 
-factor: ID { this.pilaTerceto.push((Token)$1.obj); }
+factor: ID { checkContain((Token)$1.obj); checkNameMangling((Token)$1.obj); this.pilaTerceto.push((Token)$1.obj); }
       | CTEINT { this.pilaTerceto.push((Token)$1.obj); }
       ;
 
@@ -224,23 +233,22 @@ sentenciaSeleccion: BEGIN sentencias END
 
 // ITERACION 
                 
-iteracion: LOOP {
-                    this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
-                    this.pilaBranches.push(this.tercetoList.size());
-                    createLabelForLoop();
-                } sentencias UNTIL {
-                    createLabel();
-                    setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size());
-                } condicion { 
+iteracion: LOOP { createLabelForLoop(); } sentencias UNTIL condicion { 
                     showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
-                    setDireccionDeSaltoEnTerceto(this.tercetoList.size(), this.tercetoList.size() + 2);
-                    this.tercetoList.add(new Terceto("BI", new Token(), new Token(), null));
                     setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
-                    //this.pilaBranches.push(this.tercetoList.size());
-                    createLabel();
                 }
-         | LOOP UNTIL condicion            { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }      
+         | LOOP UNTIL condicion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }      
          ;
+
+//Llamada a funcion
+
+llamadaAFuncion: ID '(' ')' { nombreFuncion = ((Token)$1.obj).getToken();
+                              showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Llamada a Funcion " + nombreFuncion);
+                              //((Token)$1.obj).getLine();
+                              this.tercetoList.add(new Terceto("CALL", new Token("F" + ((Token)$1.obj).getToken()), new Token(), null));
+                              //Donde vuelve la funcion luego de ejecutarse.
+                            }
+                            ;
 
 %%
 
@@ -268,10 +276,18 @@ private Stack pilaBranches;	  //para el seguimiento de terceto.
 private Stack pilaTerceto;
 private Stack pilaLoopLabel;
 
+private Stack pilaBILoop;
+
+private Stack pilaReturn;
+
 private String functionName;
+private String nombreFuncion;
 private boolean functionNameNext;
+private boolean executingFunctionCode;
+private boolean errorSemantico;
 
 private int loopLabelNumber;
+
 
  public Parser(LexicAnalizer la, UIMain v, boolean debugMe, List<Token> st)
 	{
@@ -294,18 +310,22 @@ private int loopLabelNumber;
       this.pilaBegin = new Stack();
 
       this.functionName = "";
+      this.nombreFuncion = "";
       this.tmpId = new ArrayList<Token>();
 
       this.tercetoList = new ArrayList<Terceto>();
       this.pilaTerceto = new Stack();
       this.pilaBranches = new Stack();
       this.pilaLoopLabel = new Stack();
+      this.pilaBILoop = new Stack();
+      this.pilaReturn = new Stack();
 
       this.symbolsTable = st;
       this.functionNameNext = false;
-
+      this.errorSemantico = false; //Para indicarle al generador de Assembler si generar o hubo un error.
 
       loopLabelNumber = 1;
+      executingFunctionCode = false;
     }
 
     private int yylex() {
@@ -361,6 +381,7 @@ private int loopLabelNumber;
                         this.pilaLoop.pop();
                     } else {
                         showErrorParser("Linea " + tk.getLine() + ": UNTIL sin su correspondiente LOOP");
+                        this.errorSemantico = true;
                     }
                     return UNTIL;
                }
@@ -373,6 +394,7 @@ private int loopLabelNumber;
                         this.pilaBegin.pop();
                     } else {
                         showErrorParser("Linea " + tk.getLine() + ": END sin su correspondiente BEGIN");
+                        this.errorSemantico = true;
                     }
                     return END;
                }
@@ -477,6 +499,7 @@ private int loopLabelNumber;
             this.symbolsTable.add(t);
           }else{
             showErrorParser("Linea "+ t.getLine() +": Error Semantico: La funcion " + t.getToken() + " ya fue declarada");
+            this.errorSemantico = true;
           }
         }
     }
@@ -490,6 +513,7 @@ private int loopLabelNumber;
           }else{
             if (!t.getToken().contains("&")){
               showErrorParser("Linea "+ t.getLine() +": Error Semantico: " + t.getToken() + " ya fue declarado");
+              this.errorSemantico = true;
             }
           }
         }
@@ -515,14 +539,14 @@ private int loopLabelNumber;
 
     private void setDireccionDeSaltoEnTerceto(Integer terceto, int dirDeSalto){
         ((Terceto) this.tercetoList.get(terceto - 1)).setFirstOperand("LABEL" + dirDeSalto);
-        System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
-        System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
+        //System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
+        //System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
     }
 
     private void setDireccionDeSaltoEnTercetoLabelLoop(Integer terceto, int dirDeSalto){
         ((Terceto) this.tercetoList.get(terceto - 1)).setFirstOperand("LABLOOP" + dirDeSalto);
-        System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
-        System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
+        //System.out.println("Agregar Dir Salto en Terceto #" + terceto.toString() + " el valor " + dirDeSalto);
+        //System.out.println("Terceto: " + ((Terceto) this.tercetoList.get(terceto - 1)).toString());
     }
 
     private void createLabel(){
@@ -535,4 +559,22 @@ private int loopLabelNumber;
       Token label = new Token(); label.setLexema("LABLOOP" + Integer.toString(this.loopLabelNumber));
       this.tercetoList.add(new Terceto("LABEL", label, new Token(), null));
       this.loopLabelNumber++;
+    }
+
+    private void checkContain(Token t) {
+      String token = t.getToken();
+      if (executingFunctionCode){
+        token = functionName + "&" + t.getToken();
+      }
+      if (getTokenFromSymbolTable(token) == null){
+        showErrorParser("Linea " + t.getLine() + ": Error Semantico: Variable "+t.getToken()+" no declarada.");
+        this.errorSemantico = true;
+      }
+    }
+
+    private void checkNameMangling(Token t){
+      if (executingFunctionCode){
+        String s = functionName + "&" + t.getToken();
+        t.setLexema(s);
+      }
     }
