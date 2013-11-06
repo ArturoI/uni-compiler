@@ -11,6 +11,7 @@
 
 package com.uni.compiler.UI;
 
+import com.uni.compiler.assembler.AssemblerCode;
 import com.uni.compiler.lexicAnalizer.LexicAnalizer;
 import com.uni.compiler.lexicAnalizer.Token;
 import com.uni.compiler.parser.Parser;
@@ -47,6 +48,8 @@ public class UIMain extends javax.swing.JFrame {
     private Parser parser;
     
     private List symbolsTable;
+    
+    private AssemblerCode ac;
 
 	{
 	//Set Look & Feel
@@ -513,7 +516,7 @@ public class UIMain extends javax.swing.JFrame {
             
             List<Terceto> tercetos = this.parser.getTercetoList();
             Style lexPanel = new Style(this.jTextPane3);
-            lexPanel.setNegrita("\n============  T E R C E T O S  ============\n");
+            lexPanel.setNegrita("\n\n============  T E R C E T O S  ============\n\n");
             lexPanel.newLine();
             int i = 1;
             for (Terceto t: tercetos){
@@ -521,6 +524,14 @@ public class UIMain extends javax.swing.JFrame {
                 i++;
                 lexPanel.newLine();
             }
+            lexPanel.setNegrita("\n\n============  A S S E M B L E R  ============\n\n");
+            this.ac = new AssemblerCode(tercetos, this.symbolsTable);
+            ArrayList<String> ass = this.ac.getAssemblerCode();
+            for (String s : ass){
+                lexPanel.setNegrita(s);
+                lexPanel.newLine();
+            }
+            
         }
         else
             this.List.setVisible(false);
