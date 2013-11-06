@@ -5,8 +5,7 @@ public class Terceto {
     private Object secondOperand;
     private Object Operator;
     private Object Value;
-    //private int id;
-   // private int assemblerCode;
+
     private Integer assemblerResult=null;
 
     public Terceto(){
