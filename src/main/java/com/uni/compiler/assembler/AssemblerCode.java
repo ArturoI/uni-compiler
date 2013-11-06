@@ -290,25 +290,5 @@ public class AssemblerCode {
 		return new Register(null);
 	}
         
-        private void doPrint(Terceto t){
-            //agrego el mensaje en el .data
-            intMSG++;
-
-            String s = (String) t.getFirstOperand();
-
-            //meter en la estructura que tiene todo lo del .data, el bodoque de assembler para el print.
-
-            /*
-            this.printMSG.add("msgSTR_"+intMSG+"   db '" + s + "',0Ah,0Dh,'$'");
-            
-            //llamo al mensaje con la variable q acabo de crear
-            this.archivo.add("    MOV ah, 09h");
-            this.archivo.add("    LEA dx, msgSTR_"+intMSG);
-            this.archivo.add("    INT 21h");
-           
-           crear una logica que construya lo del .data por una parte, el codigo assembler posta por otra,
-           y luego mergear todo a gusto y piacere en un archivito .asm
-           
-        */
-        }
+        
 }
