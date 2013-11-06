@@ -9,7 +9,7 @@ import com.uni.compiler.parser.Terceto;
 
 public class AssemblerCode {
 
-	/*private ArrayList<Terceto> tercetoList;
+	private ArrayList<Terceto> tercetoList;
 	private ArrayList<Register> registerList;
 	private Stack pila;
 	private Queue<String> labelQueue;
@@ -216,7 +216,4 @@ public class AssemblerCode {
 	public Register freeReg(int i){
 		return new Register(null);
 	}
-        * 
-        * */
-    
 }
