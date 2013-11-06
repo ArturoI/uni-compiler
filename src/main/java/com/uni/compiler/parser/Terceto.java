@@ -65,6 +65,7 @@ public class Terceto {
         String terceto;
         terceto = "[" + this.Operator.toString();
         terceto += " | ";
+        //@TO-DO
         if (this.Operator.equals("BF") || this.Operator.equals("BI")){
             terceto += this.firstOperand.toString();
         } else {

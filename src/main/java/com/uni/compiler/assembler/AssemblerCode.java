@@ -87,9 +87,9 @@ public class AssemblerCode {
 		case 3://mul
 			mulCode(t);
 			break;
-		case 4://MOV
-			String currentRegister =getRegister("MOV");
-			addToCodeStructure("MOV " + currentRegister + " "+ t.getFirstOperand() );
+		case 4://MOV EDX frula
+			//String currentRegister = getRegister("MOV");
+                        doMov(t);
 			break;
 		case 5://CMP
 			CMPCode(t);
@@ -144,6 +144,19 @@ public class AssemblerCode {
            addToDataStructure("    MOV ah, 09h");
            addToDataStructure("    LEA dx, msgSTR_"+intMSG);
            addToDataStructure("    INT 21h");
+           
+       }
+           
+       private void doMov(Terceto t){
+           String secOperand = "";
+           if (t.getSecondOperand() instanceof Integer){
+               Terceto aux = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
+               secOperand = ((Register)registerList.get(aux.getAssemblerResult())).getName();
+               //secOperand = ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName();
+               addToCodeStructure("MOV " + t.getFirstOperand() + " " + secOperand );
+           } else {
+               addToCodeStructure("MOV " + t.getFirstOperand() + " " + t.getSecondOperand());
+           }
            
        }
 	
@@ -218,7 +231,7 @@ public class AssemblerCode {
 
 	public void addCode(Terceto t) {
 		String currentRegister = getRegister("ADD");
-		if(!(t.getFirstOperand() instanceof Terceto)&&!(t.getSecondOperand() instanceof Terceto)){
+		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
 			addToCodeStructure("ADD " + currentRegister + " " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));

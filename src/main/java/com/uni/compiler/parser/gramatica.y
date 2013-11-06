@@ -534,6 +534,14 @@ private int loopLabelNumber;
       Object operand1 = this.pilaTerceto.pop();
       Object operand2 = this.pilaTerceto.pop();
       Terceto t;
+      /*if (operand1 instanceof Integer){
+        Object aux = operand1;
+        operand1 = this.tercetoList.get(((Integer)aux).intValue() - 1);
+      }
+      if (operand2 instanceof Integer){
+        Object aux2 = operand2;
+        operand2 = this.tercetoList.get(((Integer)aux2).intValue() - 1);
+      }*/
       if (presedencia == 1){
         t = new Terceto(operador, operand1, operand2, null);
       } else {
