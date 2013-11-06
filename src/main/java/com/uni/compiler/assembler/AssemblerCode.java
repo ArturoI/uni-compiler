@@ -41,44 +41,111 @@ public class AssemblerCode {
 
 		}
 	}
+	
 
 	public void generateBeginCode() {
 
 	}
 
 	public void generateCode(Terceto t) {
-		switch (t.getAssemblerCode()) {
+		switch (operationMapping((String)t.getOperator())) {
 		case 0://ADD
 			addCode(t);
 			break;
-		// addCode(t);
-		case 1://Mul
+		case 1://sub
+			subCode(t);
 			break;
-		// commuteOperation
-		case 2: 
+		case 2://div
+			divCode(t);
 			break;
-		// mulCode();
-		case 3:
+		case 3://mul
+			mulCode(t);
 			break;
-		// divCode();
-		case 4:
+		case 4://MOV
+			String currentRegister =getRegister("MOV");
+			System.out.println("MOV " + currentRegister + " "+ t.getFirstOperand() );
 			break;
-		//Print
-		case 5:
+		case 5://CMP
+			CMPCode(t);
 			break;
-		//salto incondiconal
-		case 6:
+		case 6://PRINT
 			break;
-		//comparacion
-		case 7:
+		case 7://JE
+			System.out.println((String)t.getOperator() + " " + t.getFirstOperand() );
 			break;
-		//generar label??
-		case 8:
+		case 8://
+			System.out.println((String)t.getOperator() + " " + t.getFirstOperand() );
 			break;
-		//salto por falso
+		case 9://label
+			System.out.println((String)t.getOperator() + " " + t.getFirstOperand() );
+			break;
+		case 10://label
+			System.out.println((String)t.getOperator() +  " " + t.getFirstOperand() );
+			break;
+		case 11://label
+			System.out.println((String)t.getOperator() +  " " + t.getFirstOperand() );
+			break;
+		case 12://label
+			System.out.println((String)t.getOperator() +  " " + t.getFirstOperand() );
+			break;
+		case 13://label
+			System.out.println((String)t.getFirstOperand() + ": ");
+			break;
 		default:
 			break;
 		}
+	}
+	
+	//Mapping Codigo Assembler
+	
+	private int operationMapping(String op){
+		if (op.equals("ADD")){
+			return 0;
+		}
+		if (op.equals("SUB")){
+			return 1;
+		}
+		if (op.equals("DIV")){
+			return 2;
+		}
+		if (op.equals("MUL")){
+			return 3;
+		}
+		if (op.equals("MOV")){
+			return 4;
+		}
+		if (op.equals("CMP")){
+			return 5;
+		}
+		if (op.equals("PRINT")){
+			return 6; //TODO
+		}
+
+		if (op.equals("JAE")){
+			return 7;
+		}
+		if (op.equals("JA")){
+			return 8;
+		}
+		if (op.equals("JB")){
+			return 9;
+		}
+		if (op.equals("JBE")){
+			return 10;
+		}
+		if (op.equals("JNE")){
+			return 11;
+		}
+		if (op.equals("JE")){
+			return 12;
+		}
+		if (op.equals("LABEl")){
+			return 13; //TODO
+		}
+		
+		
+		
+		return -1;
 	}
 	
 	public int registerMapping(String register){
@@ -105,7 +172,6 @@ public class AssemblerCode {
 			System.out.println("ADD " + currentRegister + " " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
-			t.setAsseblerResult(registerMapping(currentRegister));
 		}
 		else{
 			 if((t.getFirstOperand() instanceof Terceto)&&(t.getSecondOperand() instanceof Terceto)){
@@ -113,14 +179,12 @@ public class AssemblerCode {
 							" " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
 					t.setAsseblerResult(registerMapping(currentRegister));
 					registerList.get(registerMapping(currentRegister)).setBusy(true);
-					t.setAsseblerResult(registerMapping(currentRegister));
 
 				}
 			 else if (t.getFirstOperand() instanceof Terceto){
 						System.out.println("ADD " +  ((Register)registerList.get(((Terceto)t.getFirstOperand()).getAssemblerResult())).getName() + " " +  t.getSecondOperand());
 						t.setAsseblerResult(registerMapping(currentRegister));
 						registerList.get(registerMapping(currentRegister)).setBusy(true);
-						t.setAsseblerResult(registerMapping(currentRegister));
 
 			 }
 			 	else if (t.getSecondOperand() instanceof Terceto){
@@ -128,7 +192,6 @@ public class AssemblerCode {
 				System.out.println("ADD " + currentRegister + " " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
 				t.setAsseblerResult(registerMapping(currentRegister));
 				registerList.get(registerMapping(currentRegister)).setBusy(true);
-				t.setAsseblerResult(registerMapping(currentRegister));
 
 			}
 		}
@@ -143,7 +206,6 @@ public class AssemblerCode {
 			System.out.println("MUL " + currentRegister + " " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
-			t.setAsseblerResult(registerMapping(currentRegister));
 		}
 		else{
 			 if((t.getFirstOperand() instanceof Terceto)&&(t.getSecondOperand() instanceof Terceto)){
@@ -151,14 +213,12 @@ public class AssemblerCode {
 							" " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
 					t.setAsseblerResult(registerMapping(currentRegister));
 					registerList.get(registerMapping(currentRegister)).setBusy(true);
-					t.setAsseblerResult(registerMapping(currentRegister));
 
 				}
 			 else if (t.getFirstOperand() instanceof Terceto){
 						System.out.println("MUL" +  ((Register)registerList.get(((Terceto)t.getFirstOperand()).getAssemblerResult())).getName() + " " +  t.getSecondOperand());
 						t.setAsseblerResult(registerMapping(currentRegister));
 						registerList.get(registerMapping(currentRegister)).setBusy(true);
-						t.setAsseblerResult(registerMapping(currentRegister));
 
 			 }
 			 	else if (t.getSecondOperand() instanceof Terceto){
@@ -166,7 +226,6 @@ public class AssemblerCode {
 				System.out.println("ADD " + currentRegister + " " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
 				t.setAsseblerResult(registerMapping(currentRegister));
 				registerList.get(registerMapping(currentRegister)).setBusy(true);
-				t.setAsseblerResult(registerMapping(currentRegister));
 
 			}
 		}
@@ -190,19 +249,31 @@ public class AssemblerCode {
 		System.out.println("PRINT " + t.getFirstOperand());
 	}
 	
-	public void doCMP(Terceto t){
-		//if(t.getFirstOperand().isTerceto){
-			//Register r  = getFreeRegister();
-			//System.out.println("MOV " + r + t.getFirstOperand());
-			//System.out.println("CMP " + r + t.getSecondOperand());
-		//}
-		//else{
-		
-		//}
-			
-		
-	}
+	public void CMPCode(Terceto t){
+		String currentRegister = getRegister("CMP");
+		if (!(t.getFirstOperand() instanceof Terceto) && !(t.getSecondOperand() instanceof Terceto)) {
+			 System.out.println("MOV " + currentRegister + t.getFirstOperand());
+			 System.out.println("CMP " + currentRegister + t.getSecondOperand());
+			 t.setAsseblerResult(registerMapping(currentRegister));
+			 registerList.get(registerMapping(currentRegister)).setBusy(true);
+		} else {
+			if ((t.getFirstOperand() instanceof Terceto) && (t.getSecondOperand() instanceof Terceto)) {
+				//System.out.println("MOV " + currentRegister + t.getFirstOperand());
+				System.out.println("CMP " + ((Register)registerList.get(((Terceto)t.getFirstOperand()).getAssemblerResult())).getName() + 
+								" " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
+			} else if (t.getFirstOperand() instanceof Terceto) {
+				System.out.println("MOV " + currentRegister + t.getFirstOperand());
+				System.out.println("CMP " + currentRegister + 
+						" " + ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName());
+			} else if (t.getSecondOperand() instanceof Terceto) {
+				System.out.println("MOV " + currentRegister + t.getSecondOperand());
+				System.out.println("CMP " + ((Register)registerList.get(((Terceto)t.getFirstOperand()).getAssemblerResult())).getName() + 
+						" " + currentRegister);
+			}
+		}
 
+	}
+	
 
 	public String getRegister(String operation) {	
 		for (Register r:registerList){

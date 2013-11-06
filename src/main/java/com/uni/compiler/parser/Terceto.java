@@ -5,6 +5,9 @@ public class Terceto {
     private Object secondOperand;
     private Object Operator;
     private Object Value;
+    //private int id;
+   // private int assemblerCode;
+    private Integer assemblerResult=null;
 
     public Terceto(){
     }
@@ -71,5 +74,15 @@ public class Terceto {
         terceto += " | " + operandToString(this.secondOperand) + " ]";
         return terceto;
     }
+    
+    
+    public void setAsseblerResult(int i){
+    	assemblerResult=i;
+    }
+    
+    public Integer getAssemblerResult(){
+    	return assemblerResult;
+    }
+  
     
 }
