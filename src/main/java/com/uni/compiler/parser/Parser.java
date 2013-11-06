@@ -526,7 +526,7 @@ final static String yyrule[] = {
 "llamadaAFuncion : ID '(' ')'",
 };
 
-//#line 254 "gramatica.y"
+//#line 255 "gramatica.y"
 
 /*_________________________________________________________________________________________________________*/
 
@@ -555,9 +555,11 @@ private Stack pilaLoopLabel;
 private Stack pilaBILoop;
 
 private Stack pilaReturn;
+private Stack pilaOperators;
 
 private String functionName;
 private String nombreFuncion;
+
 private boolean functionNameNext;
 private boolean executingFunctionCode;
 private boolean errorSemantico;
@@ -595,6 +597,7 @@ private int loopLabelNumber;
       this.pilaLoopLabel = new Stack();
       this.pilaBILoop = new Stack();
       this.pilaReturn = new Stack();
+      this.pilaOperators = new Stack();
 
       this.symbolsTable = st;
       this.functionNameNext = false;
@@ -854,7 +857,7 @@ private int loopLabelNumber;
         t.setLexema(s);
       }
     }
-//#line 804 "Parser.java"
+//#line 807 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1268,46 +1271,71 @@ case 81:
 break;
 case 82:
 //#line 208 "gramatica.y"
-{ crearTerceto(((Token)val_peek(2).obj).getToken(), 2);
-                                                            this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));
+{ crearTerceto("CMP", 1);
+                                                            this.tercetoList.add(new Terceto((String) this.pilaOperators.pop(), new Token(), new Token(), null));
                                                             /*System.out.println("agregue un BF en la posicion " + this.tercetoList.size());*/
                                                             this.pilaBranches.push(this.tercetoList.size());
+                                                            /*this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));*/
                                                             /*System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BF");*/
                                                           }
 break;
 case 83:
-//#line 216 "gramatica.y"
+//#line 217 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
 break;
 case 84:
-//#line 217 "gramatica.y"
+//#line 218 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
 break;
 case 85:
-//#line 218 "gramatica.y"
-{ showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
-break;
-case 86:
 //#line 219 "gramatica.y"
 { showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
 break;
+case 86:
+//#line 220 "gramatica.y"
+{ showErrorParser("Linea " + ((Token)val_peek(3).obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
+break;
+case 87:
+//#line 223 "gramatica.y"
+{ pilaOperators.push("JAE"); }
+break;
+case 88:
+//#line 224 "gramatica.y"
+{ pilaOperators.push("JA"); }
+break;
+case 89:
+//#line 225 "gramatica.y"
+{ pilaOperators.push("JBE"); }
+break;
+case 90:
+//#line 226 "gramatica.y"
+{ pilaOperators.push("JB"); }
+break;
+case 91:
+//#line 227 "gramatica.y"
+{ pilaOperators.push("JNE"); }
+break;
+case 92:
+//#line 228 "gramatica.y"
+{ pilaOperators.push("JE"); }
+break;
 case 95:
-//#line 236 "gramatica.y"
+//#line 237 "gramatica.y"
 { createLabelForLoop(); }
 break;
 case 96:
-//#line 236 "gramatica.y"
+//#line 237 "gramatica.y"
 { 
-                    showInfoParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
-                    setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
+                  showInfoParser("Linea " + ((Token)val_peek(4).obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
+                  setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
                 }
 break;
 case 97:
-//#line 240 "gramatica.y"
+//#line 241 "gramatica.y"
 { showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
 break;
 case 98:
-//#line 245 "gramatica.y"
+//#line 246 "gramatica.y"
 { nombreFuncion = ((Token)val_peek(2).obj).getToken();
                               showInfoParser("Linea " + ((Token)val_peek(2).obj).getLine() + ": " + "Llamada a Funcion " + nombreFuncion);
                               /*((Token)$1.obj).getLine();*/
@@ -1315,7 +1343,7 @@ case 98:
                               /*Donde vuelve la funcion luego de ejecutarse.*/
                             }
 break;
-//#line 1260 "Parser.java"
+//#line 1288 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

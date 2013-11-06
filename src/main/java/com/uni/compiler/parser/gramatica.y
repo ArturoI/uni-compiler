@@ -205,10 +205,11 @@ seleccion: IF condicion THEN sentenciaSeleccion { showInfoParser("Linea " + ((To
          | IF condicion error                   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN");  }
          ;
 
-condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto(((Token)$3.obj).getToken(), 2);
-                                                            this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));
+condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto("CMP", 1);
+                                                            this.tercetoList.add(new Terceto((String) this.pilaOperators.pop(), new Token(), new Token(), null));
                                                             //System.out.println("agregue un BF en la posicion " + this.tercetoList.size());
                                                             this.pilaBranches.push(this.tercetoList.size());
+                                                            //this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));
                                                             //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BF");
                                                           }
 
@@ -219,12 +220,12 @@ condicion: '(' exprAritmetica opLogico exprAritmetica ')' { crearTerceto(((Token
          | '(' exprAritmetica opLogico ')'                       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
          ;
 
-opLogico: '<' 
-        | MENORIGUAL 
-        | '>' 
-        | MAYORIGUAL  
-        | IGUAL 
-        | DISTINTO
+opLogico: '<' { pilaOperators.push("JAE"); }
+        | MENORIGUAL { pilaOperators.push("JA"); }
+        | '>' { pilaOperators.push("JBE"); }
+        | MAYORIGUAL  { pilaOperators.push("JB"); }
+        | IGUAL { pilaOperators.push("JNE"); }
+        | DISTINTO { pilaOperators.push("JE"); }
         ;
 
 sentenciaSeleccion: BEGIN sentencias END
@@ -234,8 +235,8 @@ sentenciaSeleccion: BEGIN sentencias END
 // ITERACION 
                 
 iteracion: LOOP { createLabelForLoop(); } sentencias UNTIL condicion { 
-                    showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
-                    setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
+                  showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
+                  setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
                 }
          | LOOP UNTIL condicion { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }      
          ;
@@ -279,9 +280,11 @@ private Stack pilaLoopLabel;
 private Stack pilaBILoop;
 
 private Stack pilaReturn;
+private Stack pilaOperators;
 
 private String functionName;
 private String nombreFuncion;
+
 private boolean functionNameNext;
 private boolean executingFunctionCode;
 private boolean errorSemantico;
@@ -319,6 +322,7 @@ private int loopLabelNumber;
       this.pilaLoopLabel = new Stack();
       this.pilaBILoop = new Stack();
       this.pilaReturn = new Stack();
+      this.pilaOperators = new Stack();
 
       this.symbolsTable = st;
       this.functionNameNext = false;
