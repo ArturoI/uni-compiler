@@ -89,15 +89,16 @@ returnF: RETURN '(' exprAritmetica ')'      { this.tercetoList.add(new Terceto("
 
 seleccionF: IF condicion THEN sentenciaSeleccionF   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
                                                       setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
+                                                      createLabel();
                                                     }
-          | IF condicion THEN sentenciaSeleccionF ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
+          | IF condicion THEN sentenciaSeleccion ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
                                                   setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 2);
                                                   this.tercetoList.add(new Terceto("JMP", new Token(), new Token(), null));
                                                   //System.out.println("agregue un BI en la posicion " + this.tercetoList.size());
                                                   this.pilaBranches.push(this.tercetoList.size());
                                                   //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BI");
                                                   createLabel();
-                                                } sentenciaSeleccionF  { setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1); createLabel(); }
+                                                } sentenciaSeleccionF  { setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1); createLabel();}         
           | IF condicion sentenciaSeleccionF    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
           ;
          
