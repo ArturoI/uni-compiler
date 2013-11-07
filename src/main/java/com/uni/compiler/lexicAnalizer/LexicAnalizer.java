@@ -86,6 +86,10 @@ public class LexicAnalizer implements Enumeration {
                 return nextToken;
 
 	}
+	
+	public boolean showError(){
+		return !this.source.hasMore;
+	}
 
 	public Token getToken() throws IOException {
             if (source.hasMoreElement()){

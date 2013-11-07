@@ -9,7 +9,7 @@ public class FileManager {
 
 	private BufferedReader source;
         private int lineNumber = 1;
-        private boolean hasMore = true;
+        public boolean hasMore = true;
         private boolean hasLastChar = true;
         
 	public FileManager(String path) {

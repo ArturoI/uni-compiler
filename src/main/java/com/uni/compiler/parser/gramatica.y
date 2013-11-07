@@ -20,7 +20,7 @@ import com.uni.compiler.lexicAnalizer.*;
 
 %%
 
-programa:   declaraciones sentencias
+programa:   declaraciones {this.tercetoList.add(new Terceto ("LABELF","inicio",new Token(),null));} sentencias
             ;
 
 //- - - - - - - - - - - - - - - - - - - - D E C L A R A C I O N - - - - - - - - - - - - - - - - - - - - 
@@ -43,11 +43,11 @@ variables: INT conjVariables ';'    { showInfoParser("Linea " + ((Token)$1.obj).
          | INT conjVariables error  { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": Error Sintactico : Se esperaba ';'");  }
          ;
 
-conjVariables: conjVariables ',' ID { addFunctionNameToToken(this.functionName, ((Token)$3.obj)); this.tmpId.add((Token)$3.obj);  }	
-             | ID                   { addFunctionNameToToken(this.functionName, ((Token)$1.obj)); this.tmpId.add((Token)$1.obj);  }
+conjVariables: conjVariables ',' ID { ((Token)$3.obj).setIsVariable(true); addFunctionNameToToken(this.functionName, ((Token)$3.obj)); this.tmpId.add((Token)$3.obj);  }	
+             | ID                   { ((Token)$1.obj).setIsVariable(true); addFunctionNameToToken(this.functionName, ((Token)$1.obj)); this.tmpId.add((Token)$1.obj);  }
 	     ;
 
-funcion: FUNCTION ID { this.tercetoList.add(new Terceto("LABEL", "F" + ((Token)$2.obj).getToken(), new Token(), null)); } bloqueFuncion { executingFunctionCode = false; }
+funcion: FUNCTION ID { this.tercetoList.add(new Terceto("LABELF", "F" + ((Token)$2.obj).getToken(), new Token(), null)); } bloqueFuncion { executingFunctionCode = false; }
        ;
 
 bloqueFuncion:	BEGIN declaracionFuncion sentenciasF END { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Cuerpo de la funcion.");
@@ -269,6 +269,8 @@ private Style lexPanel;  //Panel de Lexema
 private Style linePanel; //Panel para marcar errores
 private String lastError = "";
 
+private int cantidadErrores=0;
+
 public Stack pilaLoop;
 public Stack pilaBegin;
 
@@ -292,6 +294,8 @@ private String nombreFuncion;
 private boolean functionNameNext;
 private boolean executingFunctionCode;
 private boolean errorSemantico;
+
+public ArrayList<String> errorList = new ArrayList<String>();
 
 private int loopLabelNumber;
 
@@ -474,8 +478,10 @@ private int loopLabelNumber;
 	
     private void showErrorParser(String s){
         //errorPanel.setCursiva("ShowErrorParser : ");
-        errorPanel.setNegrita(s);
-        errorPanel.newLine();	
+	    //    errorPanel.setNegrita(s);
+	    //    errorPanel.newLine();	
+	    errorList.add(s);
+	        cantidadErrores++;
     }
 
     private Token getTokenFromSymbolTable(String tokenId){
@@ -593,4 +599,8 @@ private int loopLabelNumber;
         String s = functionName + "&" + t.getToken();
         t.setLexema(s);
       }
+    }
+    
+    public boolean compilar(){
+    return (this.cantidadErrores > 1);
     }

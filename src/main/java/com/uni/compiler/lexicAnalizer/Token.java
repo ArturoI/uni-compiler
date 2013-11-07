@@ -10,16 +10,27 @@ public class Token {
     private String warningMessage = "";
     public String functionName;
     private int value;
+    private boolean isVariable;
 
     public Token() {
         this.functionName = "";
         this.variableType = "";
+        this.isVariable=false;
     }
 
     public Token(String lexema) {
         this.lexema = lexema;
         this.functionName = "";
         this.variableType = "";
+        this.isVariable=false;
+    }
+    
+    public boolean isVariable(){
+    	return this.isVariable;
+    }
+    
+    public void setIsVariable(boolean b){
+    	this.isVariable=b;
     }
 
     public void addChar(char c) {

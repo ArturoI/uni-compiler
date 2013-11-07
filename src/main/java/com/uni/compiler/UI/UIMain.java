@@ -207,7 +207,7 @@ public class UIMain extends javax.swing.JFrame {
             }
         });
 
-        ButtonST.setText("Show Simbol Table");
+        ButtonST.setText("Show Data");
         ButtonST.setEnabled(false);
         ButtonST.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -397,6 +397,13 @@ public class UIMain extends javax.swing.JFrame {
                 
         //ejecutar el parser
         parser.run();
+        int cant=0;
+        for (String error:parser.errorList){
+        	if (cant<parser.errorList.size()-1){
+        		errorPanel.setNegrita(error);
+                errorPanel.newLine();
+        	}
+        }
         
         while (!parser.pilaBegin.isEmpty()){
             Token t = (Token) parser.pilaBegin.pop();
@@ -469,8 +476,7 @@ public class UIMain extends javax.swing.JFrame {
             System.out.println("An exception was trhown \n - Cause: " + e.getCause()
                              + "\n Message: " + e.getMessage());
         }
-        
-        
+
     }
     
     private void ButtonRWTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRWTActionPerformed
@@ -524,13 +530,17 @@ public class UIMain extends javax.swing.JFrame {
                 i++;
                 lexPanel.newLine();
             }
-            lexPanel.setNegrita("\n\n============  A S S E M B L E R  ============\n\n");
-            this.ac = new AssemblerCode(tercetos, this.symbolsTable);
-            ArrayList<String> ass = this.ac.getAssemblerCode();
-            for (String s : ass){
-                lexPanel.setNegrita(s);
-                lexPanel.newLine();
+            //cuidado es al revez
+            if (!this.parser.compilar()){
+	            lexPanel.setNegrita("\n\n============  A S S E M B L E R  ============\n\n");
+	            this.ac = new AssemblerCode(tercetos, this.symbolsTable);
+	            ArrayList<String> ass = this.ac.getAssemblerCode();
+	            for (String s : ass){
+	                lexPanel.setNegrita(s);
+	                lexPanel.newLine();
+	            }
             }
+            else { lexPanel.setNegrita("\n\n============  ERRORES EN EL CODIGO, NO SE GENERA ASSEMBLER  ============\n\n");}
             
         }
         else
