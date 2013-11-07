@@ -1,5 +1,7 @@
 package com.uni.compiler.parser;
 
+import com.uni.compiler.lexicAnalizer.Token;
+
 public class Terceto {
     private Object firstOperand;
     private Object secondOperand;
@@ -19,11 +21,27 @@ public class Terceto {
     }
 
     public Object getFirstOperand() {
-        return firstOperand;
+        if (firstOperand instanceof Token){ 
+            if ((((Token)firstOperand).getType() != null) && (((Token)firstOperand).getType().equals("Identificador"))){
+                return "_"+((Token)firstOperand).getToken();
+            }else{
+                return firstOperand;
+            }
+        }else{
+            return firstOperand;
+        }
     }
 
     public Object getSecondOperand() {
-        return secondOperand;
+        if (secondOperand instanceof Token){ 
+            if ((((Token)secondOperand).getType() != null) && (((Token)secondOperand).getType().equals("Identificador"))){
+                return "_"+((Token)secondOperand).getToken();
+            }else{
+                return secondOperand;
+            }
+        }else{
+            return secondOperand;
+        }
     }
 
     public Object getOperator() {

@@ -21,7 +21,7 @@ public class AssemblerCode {
 	private int  contVariables =4;
 	private int intMSG=0;
 	
-
+        private int intSeguimiento=0;
 
 	private ArrayList<String> dataStructure=new ArrayList<String>();
 	private ArrayList<String> codeStructure=new ArrayList<String>();
@@ -166,9 +166,9 @@ public class AssemblerCode {
                Terceto aux = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
                secOperand = ((Register)registerList.get(aux.getAssemblerResult())).getName();
                //secOperand = ((Register)registerList.get(((Terceto)t.getSecondOperand()).getAssemblerResult())).getName();
-               addToCodeStructure("MOV " + t.getFirstOperand() + " " + secOperand );
+               addToCodeStructure("MOV " + t.getFirstOperand() + ", " + secOperand );
            } else {
-               addToCodeStructure("MOV " + t.getFirstOperand() + " " + t.getSecondOperand());
+               addToCodeStructure("MOV " + t.getFirstOperand() + ", " + t.getSecondOperand());
            }
            
        }
@@ -257,8 +257,8 @@ public class AssemblerCode {
 	
 		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			String currentRegister = getRegister("ADD");
-			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
-			addToCodeStructure("ADD " + currentRegister + " " + t.getSecondOperand());
+			addToCodeStructure("MOV " + currentRegister + ", " + t.getFirstOperand());
+			addToCodeStructure("ADD " + currentRegister + ", " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
 			
@@ -266,97 +266,130 @@ public class AssemblerCode {
 		else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
 			Terceto aux2=  this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + " " + registerList.get(aux2.getAssemblerResult()).getName() );
+			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + registerList.get(aux2.getAssemblerResult()).getName() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(aux2.getAssemblerResult()).setBusy(false);
 		}
 		else if (t.getFirstOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
-			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getSecondOperand() );
+			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getSecondOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
 		}
 		
 		else if (t.getSecondOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getFirstOperand() );
+			addToCodeStructure("ADD " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getFirstOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
 		}
-	}
+	
+        }
 	
 	
 	
 	public void mulCode(Terceto t){
+                String result = "";
 		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			String currentRegister = getRegister("MUL");
-			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
-			addToCodeStructure("MUL " + currentRegister + " " + t.getSecondOperand());
+			addToCodeStructure("MOV " + currentRegister + ", " + t.getFirstOperand());
+			addToCodeStructure("MUL " + currentRegister + ", " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
-			
+			result = currentRegister;
 		}
 		else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
 			Terceto aux2=  this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + " " + registerList.get(aux2.getAssemblerResult()).getName() );
+			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + registerList.get(aux2.getAssemblerResult()).getName() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(aux2.getAssemblerResult()).setBusy(false);
+                        result = registerList.get(aux1.getAssemblerResult()).getName();
 		}
 		else if (t.getFirstOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
-			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getSecondOperand() );
+			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getSecondOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
+                        result = registerList.get(aux1.getAssemblerResult()).getName();
 		}
 		
 		else if (t.getSecondOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getFirstOperand() );
+			addToCodeStructure("MUL " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getFirstOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
-		}
+                        result = registerList.get(aux1.getAssemblerResult()).getName();
+                }
+                                
+                addOverflowCode(result);
 	}
+        
+        private void addOverflowCode(String result){
+            addToCodeStructure("CMP " + result + ", 65535");
+            addToCodeStructure("JBE OFLABEL_" + this.intSeguimiento);
+            addToCodeStructure("call ErrOF");
+            addToCodeStructure("JMP FIN");
+            addToCodeStructure("OFLABEL_" + this.intSeguimiento +": ");
+            this.intSeguimiento++;
+        }
+        
+        private void addDivByZero(String dividend){
+            addToCodeStructure("CMP " + dividend + ", 0");
+            addToCodeStructure("JNE OFLABEL_" + intSeguimiento);
+            addToCodeStructure("call ErrZERO");
+            addToCodeStructure("JMP FIN");
+            addToCodeStructure("OFLABEL_" + intSeguimiento+": ");
+            this.intSeguimiento++;
+        }
 	
 	public void divCode(Terceto t){
+                String result = "";
 		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			String currentRegister = getRegister("DIV");
-			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
-			addToCodeStructure("DIV " + currentRegister + " " + t.getSecondOperand());
+			addToCodeStructure("MOV " + currentRegister + ", " + t.getFirstOperand());
+			addToCodeStructure("DIV " + currentRegister + ", " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
-			
+                        addToCodeStructure("MOV " + "_vaux"+ contVariables + ", "+ t.getSecondOperand());
+			result = "_vaux"+contVariables;
+                        contVariables++;
 		}
 		else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
 			Terceto aux2=  this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + " " + registerList.get(aux2.getAssemblerResult()).getName() );
+			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + registerList.get(aux2.getAssemblerResult()).getName() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
-
 			registerList.get(aux2.getAssemblerResult()).setBusy(false);
+                        result = registerList.get(aux2.getAssemblerResult()).getName();
 		}
 		else if (t.getFirstOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
-			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getSecondOperand() );
+			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getSecondOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
-		}
+                        addToCodeStructure("MOV " + "_vaux"+ contVariables + ", "+ t.getSecondOperand());
+			result = "_vaux"+contVariables;
+                        contVariables++;
+                }
 		
 		else if (t.getSecondOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
 			String currentRegister = getRegister("DIV");
-			addToCodeStructure("MOV " + currentRegister + " "+ t.getFirstOperand()  );
-			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getFirstOperand() );
+			addToCodeStructure("MOV " + currentRegister + ", "+ t.getFirstOperand()  );
+			addToCodeStructure("DIV " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getFirstOperand() );
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
+                        result = registerList.get(aux1.getAssemblerResult()).getName();
 		}
+                addDivByZero(result);
 	}
 	
 	public void subCode(Terceto t){
 		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			String currentRegister = getRegister("SUB");
-			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
-			addToCodeStructure("SUB " + currentRegister + " " + t.getSecondOperand());
+			addToCodeStructure("MOV " + currentRegister + ", " + t.getFirstOperand());
+			addToCodeStructure("SUB " + currentRegister + ", " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
 			
@@ -364,7 +397,7 @@ public class AssemblerCode {
 		else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
 			Terceto aux2=  this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + " " + registerList.get(aux2.getAssemblerResult()).getName() );
+			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + registerList.get(aux2.getAssemblerResult()).getName() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 
 			registerList.get(aux2.getAssemblerResult()).setBusy(false);
@@ -372,7 +405,7 @@ public class AssemblerCode {
                 
 		else if (t.getFirstOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
-			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getSecondOperand() );
+			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getSecondOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
 			
@@ -381,8 +414,8 @@ public class AssemblerCode {
 		else if (t.getSecondOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
 			String currentRegister = getRegister("SUB");
-			addToCodeStructure("MOV " + currentRegister + " "+ t.getFirstOperand()  );
-			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getFirstOperand() );
+			addToCodeStructure("MOV " + currentRegister + ", "+ t.getFirstOperand()  );
+			addToCodeStructure("SUB " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getFirstOperand() );
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
 			
@@ -394,8 +427,8 @@ public class AssemblerCode {
 		
 		if(!(t.getFirstOperand() instanceof Integer)&&!(t.getSecondOperand() instanceof Integer)){
 			String currentRegister = getRegister("CMP");
-			addToCodeStructure("MOV " + currentRegister + " " + t.getFirstOperand());
-			addToCodeStructure("CMP " + currentRegister + " " + t.getSecondOperand());
+			addToCodeStructure("MOV " + currentRegister + ", " + t.getFirstOperand());
+			addToCodeStructure("CMP " + currentRegister + ", " + t.getSecondOperand());
 			t.setAsseblerResult(registerMapping(currentRegister));
 			registerList.get(registerMapping(currentRegister)).setBusy(true);
 			
@@ -403,20 +436,20 @@ public class AssemblerCode {
 		else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
 			Terceto aux2=  this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + " " + registerList.get(aux2.getAssemblerResult()).getName() );
+			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + registerList.get(aux2.getAssemblerResult()).getName() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(aux2.getAssemblerResult()).setBusy(false);
 		}
 		else if (t.getFirstOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getFirstOperand()).intValue() - 1);
-			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getSecondOperand() );
+			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getSecondOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
 		}
 		
 		else if (t.getSecondOperand() instanceof Integer){
 			Terceto aux1 = this.tercetoList.get(((Integer)t.getSecondOperand()).intValue() - 1);
-			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + " " + t.getFirstOperand() );
+			addToCodeStructure("CMP " + registerList.get(aux1.getAssemblerResult()).getName() + ", " + t.getFirstOperand() );
 			t.setAsseblerResult(registerMapping(registerList.get(aux1.getAssemblerResult()).getName()));
 			registerList.get(registerMapping(registerList.get(aux1.getAssemblerResult()).getName())).setBusy(true);
 		}
@@ -479,8 +512,8 @@ public class AssemblerCode {
 
 	public Register freeReg(int i){
 		registerList.get(i).getTerceto().setAsseblerResult(contVariables);
-		symbolTable.add(new Token("@vaux" + contVariables));
-		addToCodeStructure("MOV " + "@vaux"+ contVariables + " "+ registerList.get(i).getName());
+		symbolTable.add(new Token("_vaux" + contVariables));
+		addToCodeStructure("MOV " + "_vaux"+ contVariables + ", "+ registerList.get(i).getName());
 		contVariables++;
 		registerList.get(i).setBusy(false);
 		return registerList.get(i);
@@ -494,7 +527,7 @@ public class AssemblerCode {
 	public void initCode(){
 
         //genero encabezado del archivo
-		addToDataStructure("; Codigo assembler generado a partir del c?digo intermedio\n\n");
+		addToDataStructure("; Codigo assembler generado a partir del codigo intermedio\n\n");
         
 		addToDataStructure(".model  small");
 		addToDataStructure(".stack  100h");
