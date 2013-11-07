@@ -533,7 +533,11 @@ public class UIMain extends javax.swing.JFrame {
             //cuidado es al revez
             if (!this.parser.compilar()){
 	            lexPanel.setNegrita("\n\n============  A S S E M B L E R  ============\n\n");
-	            this.ac = new AssemblerCode(tercetos, this.symbolsTable);
+                    try {
+                        this.ac = new AssemblerCode(tercetos, this.symbolsTable);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(UIMain.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 	            ArrayList<String> ass = this.ac.getAssemblerCode();
 	            for (String s : ass){
 	                lexPanel.setNegrita(s);
