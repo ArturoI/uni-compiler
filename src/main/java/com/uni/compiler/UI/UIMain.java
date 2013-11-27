@@ -458,15 +458,20 @@ public class UIMain extends javax.swing.JFrame {
                             lexPanel.setCursiva(t.getType()+ " : ");
                             lexPanel.setNegrita("<" + t.getToken() +">");
                             lexPanel.newLine();
-
                         }else{
-                            if(!t.getType().equals("")){
-                                lexPanel.setCursiva("linea " + t.getLine() + ": " + t.getType() + " : ");
+                            if (t.getType().equals("Constante Negativa")) {
+                                lexPanel.setCursiva(t.getType()+ " : ");
                                 lexPanel.setNegrita(t.getToken());
                                 lexPanel.newLine();
                             } else {
-                                lexPanel.setNegrita("linea " + t.getLine() + ": " + t.getToken());
-                                lexPanel.newLine();
+                                if(!t.getType().equals("")){
+                                    lexPanel.setCursiva("linea " + t.getLine() + ": " + t.getType() + " : ");
+                                    lexPanel.setNegrita(t.getToken());
+                                    lexPanel.newLine();
+                                } else {
+                                    lexPanel.setNegrita("linea " + t.getLine() + ": " + t.getToken());
+                                    lexPanel.newLine();
+                                }
                             }
                         }
                     }   

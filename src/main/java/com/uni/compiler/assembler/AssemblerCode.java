@@ -338,7 +338,7 @@ public class AssemblerCode {
 	}
         
         private void addOverflowCode(String result){
-            addToCodeStructure("    CMP " + result + ", 65535");
+            addToCodeStructure("    CMP " + result + ", 0");
             addToCodeStructure("    JBE OFLABEL_" + this.intSeguimiento);
             addToCodeStructure("    call ErrOF");
             addToCodeStructure("    JMP FIN");
@@ -533,7 +533,7 @@ public class AssemblerCode {
 	
 	public void createVariable(Token t){
 		//deberia ser en el .data
-		addToDataStructure("_" + t.getToken() + " dd 0");
+		addToDataStructure("_" + t.getToken() + " dd 0"); //dd limit 0-4294967295
 	}
 	
 	public void initCode(){

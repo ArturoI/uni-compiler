@@ -20,7 +20,6 @@ public class AssemblerCodeTest {
 		t5.setAsseblerResult(1);
 		Terceto t4 = new Terceto("ADD", t1, t5, null);
 
-
 		tercetoList.add(t5);
 		//AssemblerCode myCode = new AssemblerCode(tercetoList);
 		//myCode.getAssemblerCode(tercetoList);

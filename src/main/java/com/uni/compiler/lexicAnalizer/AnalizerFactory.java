@@ -423,7 +423,7 @@ public class AnalizerFactory {
         
         public void createState11() {
 		s11.addNextState(new Integer(1), new Cell(se, ncOperationAction));
-		s11.addNextState(new Integer(2), new Cell(s12, consumeAction));
+		s11.addNextState(new Integer(2), new Cell(s12, negativeConstAction));
 		s11.addNextState(new Integer(3), new Cell(se, ncOperationAction));
 		s11.addNextState(new Integer(4), new Cell(se, ncOperationAction));
 		s11.addNextState(new Integer(5), new Cell(se, ncOperationAction));
