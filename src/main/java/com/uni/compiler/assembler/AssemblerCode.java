@@ -2,7 +2,6 @@ package com.uni.compiler.assembler;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
@@ -23,6 +22,7 @@ public class AssemblerCode {
     private int intSeguimiento = 0;
     private ArrayList<String> dataStructure = new ArrayList<String>();
     private ArrayList<String> codeStructure = new ArrayList<String>();
+    private ArrayList<String> variableStructure = new ArrayList<String>();
     private Escribe ass_cod;
 
     public AssemblerCode(List<Terceto> TL, List<Token> ST) throws FileNotFoundException {
@@ -56,7 +56,7 @@ public class AssemblerCode {
 
         initCode();
         addFunctionsDeclarations();
-
+        addVariables();
         addToCodeStructure("fin:");
         addToCodeStructure("    mov ah, 4ch");
         addToCodeStructure("    mov al, 0");
@@ -144,6 +144,10 @@ public class AssemblerCode {
         codeStructure.add(t);
     }
 
+    private void addToVariableStructure(String t) {
+        variableStructure.add(t);
+    }
+
     private void doPrint(Terceto t) {
         //agrego el mensaje en el .data
         intMSG++;
@@ -152,7 +156,7 @@ public class AssemblerCode {
 
         //meter en la estructura que tiene todo lo del .data, el bodoque de assembler para el print.
 
-        addToDataStructure(" msgSTR_" + intMSG + "   db '" + s + "',0Ah,0Dh,'$'");
+        addToVariableStructure(" msgSTR_" + intMSG + "   db '" + s + "',0Ah,0Dh,'$'");
         addToCodeStructure(" MOV ah, 09h");
         addToCodeStructure(" LEA dx, msgSTR_" + intMSG);
         addToCodeStructure(" INT 21h");
@@ -167,6 +171,7 @@ public class AssemblerCode {
         }
     }
 //Mapping Codigo Assembler
+
     private int operationMapping(String op) {
         if (op.equals("ADD")) {
             return 0;
@@ -575,18 +580,18 @@ public class AssemblerCode {
             addToCodeStructure("    CMP " + currentRegister + ", " + t.getSecondOperand());
             t.setAsseblerResult(registerMapping(currentRegister));
             registerList.get(registerMapping(currentRegister)).setBusy(true);
-            
+
         } else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)) {
             Terceto aux1 = this.tercetoList.get(((Integer) t.getFirstOperand()).intValue() - 1);
             Terceto aux2 = this.tercetoList.get(((Integer) t.getSecondOperand()).intValue() - 1);
             String currentRegister = getRegister();
-            if ( !isInRegister(aux1) && !isInRegister(aux2) ){ //Variable Variable
+            if (!isInRegister(aux1) && !isInRegister(aux2)) { //Variable Variable
                 addToCodeStructure("    MOV " + currentRegister + ", " + aux1.getVariable());
                 addToCodeStructure("    CMP " + currentRegister + ", " + aux2.getVariable());
                 t.setAsseblerResult(this.registerMapping(currentRegister));
                 registerList.get(this.registerMapping(currentRegister)).setBusy(true);
-            } else if ((isInRegister(aux1) && isInRegister(aux2)) || (isInRegister(aux1) && !isInRegister(aux2))){ //Registro Registro o Registro Variable
-                addToCodeStructure("    CMP " + aux1.getVariable() + ", " + aux2.getVariable() );
+            } else if ((isInRegister(aux1) && isInRegister(aux2)) || (isInRegister(aux1) && !isInRegister(aux2))) { //Registro Registro o Registro Variable
+                addToCodeStructure("    CMP " + aux1.getVariable() + ", " + aux2.getVariable());
                 t.setAsseblerResult(aux1.getAssemblerResult());
                 registerList.get(aux2.getAssemblerResult()).setBusy(false);
             } else if (!isInRegister(aux1) && isInRegister(aux2)) { //variable Registro
@@ -598,7 +603,7 @@ public class AssemblerCode {
             }
         } else if (t.getFirstOperand() instanceof Integer) { //Terceto Directo
             Terceto aux1 = this.tercetoList.get(((Integer) t.getFirstOperand()).intValue() - 1);
-            if ( !isInRegister(aux1)){//Terceto = Variable
+            if (!isInRegister(aux1)) {//Terceto = Variable
                 String currentRegister = getRegister();
                 addToCodeStructure("    MOV " + currentRegister + ", " + aux1.getVariable());
                 addToCodeStructure("    CMP " + currentRegister + ", " + t.getSecondOperand());
@@ -656,7 +661,7 @@ public class AssemblerCode {
 
     private void createVariable(Token t) {
         //deberia ser en el .data
-        addToDataStructure("_" + t.getToken() + " \t dd 0"); //dd limit 0-4294967295
+        addToVariableStructure("_" + t.getToken() + " \t dd 0"); //dd limit 0-4294967295
     }
 
     private void initCode() {
@@ -678,6 +683,12 @@ public class AssemblerCode {
             }
         }
 
+    }
+
+    private void addVariables() {
+        for (String s : this.variableStructure) {
+            addToDataStructure(s);
+        }
     }
 
     private void addFunctionsDeclarations() {
