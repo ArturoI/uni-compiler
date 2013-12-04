@@ -102,5 +102,16 @@ public class Terceto {
     	return assemblerResult;
     }
   
+    public String getVariable(){
+        if (assemblerResult.intValue() == 0 )
+            return "EAX";
+        if (assemblerResult.intValue() == 1 )
+            return "EBX";
+        if (assemblerResult.intValue() == 2 )
+            return "ECX";
+        if (assemblerResult.intValue() == 3 )
+            return "EDX";
+        return "_@vaux"+assemblerResult.intValue();
+    }
     
 }

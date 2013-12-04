@@ -85,13 +85,39 @@ returnF: RETURN '(' exprAritmetica ')'      { this.tercetoList.add(new Terceto("
        | RETURN '(' exprAritmetica error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'"); }
        ;
 
+condicionF: '(' exprAritmeticaF opLogico exprAritmeticaF ')' { crearTerceto("CMP", 1);
+                                                            this.tercetoList.add(new Terceto((String) this.pilaOperators.pop(), new Token(), new Token(), null));
+                                                            //System.out.println("agregue un BF en la posicion " + this.tercetoList.size());
+                                                            this.pilaBranches.push(this.tercetoList.size());
+                                                            //this.tercetoList.add(new Terceto("BF", new Token(), new Token(), null));
+                                                            //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BF");
+                                                          }
+
+         
+         | exprAritmeticaF opLogico exprAritmeticaF ')'            { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba '('."); }
+         | '(' exprAritmeticaF opLogico exprAritmeticaF error      { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba ')'."); }
+         | '(' opLogico exprAritmeticaF ')'                       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
+         | '(' exprAritmeticaF opLogico ')'                       { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba un valor para comparar."); }
+         ;
+
+exprAritmeticaF:exprAritmeticaF '+' termino { crearTerceto("ADD", 2); }
+              | exprAritmeticaF '-' termino { crearTerceto("SUB", 2); }
+              | termino
+
+
+              | exprAritmeticaF '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
+              | '+' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }  	
+              | exprAritmeticaF '-' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
+              | '-' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
+              ;
+
 //SELECCION
 
-seleccionF: IF condicion THEN sentenciaSeleccionF   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
+seleccionF: IF condicionF THEN sentenciaSeleccionF   { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF");
                                                       setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1);
                                                       createLabel();
                                                     }
-          | IF condicion THEN sentenciaSeleccion ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
+          | IF condicionF THEN sentenciaSeleccionF ELSE { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia IF-ELSE");
                                                   setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 2);
                                                   this.tercetoList.add(new Terceto("JMP", new Token(), new Token(), null));
                                                   //System.out.println("agregue un BI en la posicion " + this.tercetoList.size());
@@ -99,7 +125,7 @@ seleccionF: IF condicion THEN sentenciaSeleccionF   { showInfoParser("Linea " + 
                                                   //System.out.println("agregue un " + this.tercetoList.size() + " en el tope de la pila para el BI");
                                                   createLabel();
                                                 } sentenciaSeleccionF  { setDireccionDeSaltoEnTerceto((Integer) this.pilaBranches.pop(), this.tercetoList.size() + 1); createLabel();}         
-          | IF condicion sentenciaSeleccionF    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
+          | IF condicionF sentenciaSeleccionF    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Se esperaba THEN"); }
           ;
          
 sentenciaSeleccionF: BEGIN sentenciasF END
@@ -108,11 +134,11 @@ sentenciaSeleccionF: BEGIN sentenciasF END
 
 // ITERACION
 
-iteracionF: LOOP { createLabelForLoop(); } sentenciasF UNTIL condicion { 
+iteracionF: LOOP { createLabelForLoop(); } sentenciasF UNTIL condicionF { 
                     showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL");
                     setDireccionDeSaltoEnTercetoLabelLoop(this.tercetoList.size(), (Integer) this.pilaLoopLabel.pop());
                 }
-          | LOOP UNTIL condicion             { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
+          | LOOP UNTIL condicionF             { showInfoParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Sentencia LOOP-UNTIL sin cuerpo"); }
           ;
 
 
@@ -152,7 +178,8 @@ asignacion: ID '=' exprAritmetica   { showInfoParser("Linea " + ((Token)$1.obj).
 exprAritmetica:	exprAritmetica '+' termino { crearTerceto("ADD", 2); }
               | exprAritmetica '-' termino { crearTerceto("SUB", 2); }
               | termino
-             
+              | llamadaAFuncion
+
               | exprAritmetica '+' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
               | '+' termino                 { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); }  	
               | exprAritmetica '-' error    { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
@@ -162,7 +189,7 @@ exprAritmetica:	exprAritmetica '+' termino { crearTerceto("ADD", 2); }
 termino: termino '*' factor { crearTerceto("MUL", 2); }
        | termino '/' factor { crearTerceto("DIV", 2); }
        | factor
-       
+
        | termino '*' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 
        | '*' factor          { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 	
        | termino '/' error   { showErrorParser("Linea " + ((Token)$1.obj).getLine() + ": " + "Error Sintactico : Expresion invalida"); } 

@@ -116,4 +116,12 @@ public class Token {
     public void setValue(int value) {
         this.value = value;
     }
+    
+    public Token(String lexema, String t) {
+        this.lexema = lexema;
+        this.functionName = "";
+        this.variableType = "";
+        this.isVariable=false;
+        this.type = t;
+    }
 }
