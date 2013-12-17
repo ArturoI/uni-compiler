@@ -251,12 +251,14 @@ public class AssemblerCode {
 
     public void codeForOpeation(Terceto t, String op) {
         //Directo Directo (2 + 3)
+        String registroResultado = "";
         if (!(t.getFirstOperand() instanceof Integer) && !(t.getSecondOperand() instanceof Integer)) {
             String currentRegister = getRegister();
             addToCodeStructure("    MOV " + currentRegister + ", " + t.getFirstOperand());
             addToCodeStructure("    " + op + " " + currentRegister + ", " + t.getSecondOperand());
             t.setAsseblerResult(registerMapping(currentRegister));
             registerList.get(registerMapping(currentRegister)).setBusy(true);
+            registroResultado = currentRegister;
         } //terceto terceto 
         else if ((t.getFirstOperand() instanceof Integer) && (t.getSecondOperand() instanceof Integer)) {
             Terceto aux1 = this.tercetoList.get(((Integer) t.getFirstOperand()).intValue() - 1);
@@ -266,12 +268,14 @@ public class AssemblerCode {
                 addToCodeStructure("    " + op + " " + aux1.getVariable() + ", " + aux2.getVariable());
                 t.setAsseblerResult(aux1.getAssemblerResult());
                 //ya esta en un registro, no hay que setearlo como busy
+                registroResultado = aux1.getVariable();
             } else {
                 String currentRegister = getRegister();
                 addToCodeStructure("    MOV " + currentRegister + ", " + aux1.getVariable());
                 addToCodeStructure("    " + op + " " + currentRegister + ", " + aux2.getVariable());
                 t.setAsseblerResult(registerMapping(currentRegister));
                 registerList.get(registerMapping(currentRegister)).setBusy(true);
+                registroResultado = currentRegister;
             }
         } //Terceto - Directo
         else if (t.getFirstOperand() instanceof Integer) {
@@ -281,12 +285,14 @@ public class AssemblerCode {
                 addToCodeStructure("    " + op + " " + aux1.getVariable() + ", " + t.getSecondOperand());
                 t.setAsseblerResult(aux1.getAssemblerResult());
                 registerList.get(aux1.getAssemblerResult()).setBusy(true);
+                registroResultado = aux1.getVariable();
             } else { // esta en una variable en lugar de un registro.
                 String currentRegister = getRegister();
                 addToCodeStructure("    MOV " + currentRegister + ", " + aux1.getVariable());
                 addToCodeStructure("    " + op + " " + currentRegister + ", " + t.getSecondOperand());
                 t.setAsseblerResult(registerMapping(currentRegister));
                 registerList.get(registerMapping(currentRegister)).setBusy(true);
+                registroResultado = currentRegister;
             }
         } //Directo - Terceto
         else if (t.getSecondOperand() instanceof Integer) {
@@ -296,14 +302,24 @@ public class AssemblerCode {
             addToCodeStructure("    " + op + " " + currentRegister + ", " + aux2.getVariable());
             t.setAsseblerResult(registerMapping(currentRegister));
             registerList.get(registerMapping(currentRegister)).setBusy(true);
+            registroResultado = currentRegister;
+        }
+        
+        if (op.equals("ADD")){
+            addToCodeStructure("    CMP " + registroResultado + ", 0");
+            addToCodeStructure("    JNE OFLABEL_" + this.intSeguimiento);
+            addToCodeStructure("    call ErrOF");
+            addToCodeStructure("    JMP fin");
+            addToCodeStructure("OFLABEL_" + this.intSeguimiento + ": ");
+            this.intSeguimiento++;
         }
     }
 
     private void addOverflowCode(String result) {
-        addToCodeStructure("    CMP EDX, 0");
-        addToCodeStructure("    JNE OFLABEL_" + this.intSeguimiento);
+        addToCodeStructure("    CMP EDX, 65535");
+        addToCodeStructure("    JBE OFLABEL_" + this.intSeguimiento);
         addToCodeStructure("    call ErrOF");
-        addToCodeStructure("    JMP FIN");
+        addToCodeStructure("    JMP fin");
         addToCodeStructure("OFLABEL_" + this.intSeguimiento + ": ");
         this.intSeguimiento++;
     }
@@ -533,7 +549,7 @@ public class AssemblerCode {
             }
             addToCodeStructure("    JNE OFLABEL_" + intSeguimiento);
             addToCodeStructure("    call ErrZERO");
-            addToCodeStructure("    JMP FIN");
+            addToCodeStructure("    JMP fin");
             addToCodeStructure("OFLABEL_" + intSeguimiento + ": ");
             this.intSeguimiento++;
             //End Checkeo Div by Zero
@@ -554,7 +570,7 @@ public class AssemblerCode {
             }
             addToCodeStructure("    JNE OFLABEL_" + intSeguimiento);
             addToCodeStructure("    call ErrZERO");
-            addToCodeStructure("    JMP FIN");
+            addToCodeStructure("    JMP fin");
             addToCodeStructure("OFLABEL_" + intSeguimiento + ": ");
             this.intSeguimiento++;
             //End Checkeo Div by Zero
@@ -697,7 +713,7 @@ public class AssemblerCode {
     private void addFunctionsDeclarations() {
         addToDataStructure("MyBoxTitle  db  'Salida del programa:',0");
         addToDataStructure("msgZERO db 'FATAL ERROR: DIVISION BY ZERO ',0");
-        addToDataStructure("msgOV db 'FATAL ERROR: MUL OVERFLOW ',0");
+        addToDataStructure("msgOV db 'FATAL ERROR: OVERFLOW EN SUMA o MUL ',0");
         addToDataStructure("");
     }
 
