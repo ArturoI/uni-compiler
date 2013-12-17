@@ -58,9 +58,7 @@ public class AssemblerCode {
         addFunctionsDeclarations();
         addVariables();
         addToCodeStructure("fin:");
-        addToCodeStructure("    mov ah, 4ch");
-        addToCodeStructure("    mov al, 0");
-        addToCodeStructure("    int 21h");
+        addToCodeStructure("    invoke  ExitProcess,0");
         addToCodeStructure("END START");
 
         for (String s : codeStructure) {
@@ -156,10 +154,9 @@ public class AssemblerCode {
 
         //meter en la estructura que tiene todo lo del .data, el bodoque de assembler para el print.
 
-        addToVariableStructure(" msgSTR_" + intMSG + "   db '" + s + "',0Ah,0Dh,'$'");
-        addToCodeStructure(" MOV ah, 09h");
-        addToCodeStructure(" LEA dx, msgSTR_" + intMSG);
-        addToCodeStructure(" INT 21h");
+        addToVariableStructure(" msgSTR_" + intMSG + "   db '" + s + "',0");
+        addToCodeStructure("    invoke  MessageBox, 0, ADDR msgSTR_" + intMSG +", ADDR MyBoxTitle, MB_OK");
+        //addToCodeStructure("    invoke  ExitProcess,0");
     }
 
     private void doMov(Terceto t) {
@@ -668,9 +665,15 @@ public class AssemblerCode {
 
         //genero encabezado del archivo
         addToDataStructure("; Codigo assembler generado a partir del codigo intermedio\n\n");
-
-        addToDataStructure(".model  small");
-        addToDataStructure(".stack  100h");
+        addToDataStructure(".386                   ; For 80386 CPUs or higher.");
+        addToDataStructure(".model flat, stdcall   ; Windows is always the 32-bit FLAT model");
+        addToDataStructure("option casemap:none    ; Masm32 will use case-sensitive labels.");
+        addToDataStructure("; The Windows.inc and other include files take care of many things!");
+        addToDataStructure("include    \\masm32\\include\\windows.inc");
+        addToDataStructure("include    \\masm32\\include\\kernel32.inc");
+        addToDataStructure("include    \\masm32\\include\\user32.inc");
+        addToDataStructure("includelib \\masm32\\lib\\user32.lib");
+        addToDataStructure("includelib \\masm32\\lib\\kernel32.lib");
         addToDataStructure(".data");
         addToDataStructure("");
 
@@ -692,43 +695,30 @@ public class AssemblerCode {
     }
 
     private void addFunctionsDeclarations() {
-        addToDataStructure("");
-        addToDataStructure("msgZERO db 'FATAL ERROR: DIVISION BY ZERO ',0Ah,0Dh,'$'");
-        addToDataStructure("msgOV db 'FATAL ERROR: MUL OVERFLOW ',0Ah,0Dh,'$'");
+        addToDataStructure("MyBoxTitle  db  'Salida del programa:',0");
+        addToDataStructure("msgZERO db 'FATAL ERROR: DIVISION BY ZERO ',0");
+        addToDataStructure("msgOV db 'FATAL ERROR: MUL OVERFLOW ',0");
         addToDataStructure("");
     }
 
     private void addFunctionsCode() {
-        //creo mensajes de error
-
         addToCodeStructure("");
         addToCodeStructure(".code");
-        addToCodeStructure(".586");
-        addToCodeStructure(".587");
         addToCodeStructure("");
         addToCodeStructure("START: ");
-        addToCodeStructure("MOV ax, @data");
-        addToCodeStructure("MOV ds, ax");
-        addToCodeStructure("");
         addToCodeStructure("jmp inicio");
         addToCodeStructure("");
         addToCodeStructure("; Imprime el error de overflow");
-        addToCodeStructure("");
         addToCodeStructure("ErrOF PROC");
-        addToCodeStructure("    mov ah, 09h");
-        addToCodeStructure("    lea dx, msgOV");
-        addToCodeStructure("    int 21h");
-        addToCodeStructure("    ret");
+        addToCodeStructure("    invoke  MessageBox, 0, ADDR msgOV, ADDR MyBoxTitle, MB_OK");
+        addToCodeStructure("    invoke  ExitProcess,0");
         addToCodeStructure("ErrOF ENDP");
         addToCodeStructure("");
         addToCodeStructure("; Imprime el error de division por cero");
-        addToCodeStructure("");
-        addToCodeStructure("ErrZERO PROC"); //nombre de la subrutina
-        addToCodeStructure("    mov ah, 09h");
-        addToCodeStructure("    lea dx, msgZERO"); //mensaje que muesta la subrutina
-        addToCodeStructure("    int 21h");
-        addToCodeStructure("    ret");
-        addToCodeStructure("ErrZERO ENDP"); //end de la subrutina
+        addToCodeStructure("ErrZERO PROC");
+        addToCodeStructure("    invoke  MessageBox, 0, ADDR msgZERO, ADDR MyBoxTitle, MB_OK");
+        addToCodeStructure("    invoke  ExitProcess,0");
+        addToCodeStructure("ErrZERO ENDP");
         addToCodeStructure("");
         addToCodeStructure("; -------------------- ");
     }
